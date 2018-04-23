@@ -18,7 +18,7 @@
 #define NV_CONST
 
 // Set standard function names.
-#define snprintf _snprintf
+//#define snprintf _snprintf // qweasdd: commented for VS 2017
 #if _MSC_VER < 1500
 #	define vsnprintf _vsnprintf
 #endif

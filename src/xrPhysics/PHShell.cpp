@@ -1035,10 +1035,11 @@ void CPHShell::SetCallbacks( )
     };
     std::for_each( elements.begin(), elements.end(), set_bone_callback() );
 
-    struct set_bone_reference: private boost::noncopyable
-    {
+    struct set_bone_reference {
         IKinematics &K;
-        set_bone_reference( IKinematics &K_ ): K( K_ ){}
+        set_bone_reference(IKinematics &K_) : K(K_) {}
+        //set_bone_reference(const set_bone_reference&) = delete;
+        set_bone_reference& operator=(const set_bone_reference&) = delete;
         void operator() ( u16 id )
         {
             CBoneInstance &bi  = K.LL_GetBoneInstance(id);
@@ -1051,10 +1052,6 @@ void CPHShell::SetCallbacks( )
         }
     };
     for_each_bone_id( *PKinematics(), set_bone_reference( *PKinematics() ) );
-    
-    //element_position_in_set_calbacks=u16(-1);
-    
-    //SetCallbacksRecursive(m_pKinematics->LL_GetBoneRoot(),element_position_in_set_calbacks);
 }
 
 
