@@ -77,8 +77,8 @@ typedef struct dContactGeom {
 /* contact info used by contact joint */
 
 typedef struct dContact {
+    dContactGeom geom;
   dSurfaceParameters surface;
-  dContactGeom geom;
   dVector3 fdir1;
 } dContact;
 

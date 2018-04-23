@@ -112,12 +112,12 @@ void	MODEL::build_internal	(Fvector* V, int Vcnt, TRI* T, int Tcnt, build_callba
 	// verts
 	verts_count	= Vcnt;
 	verts		= CALLOC(Fvector,verts_count);
-	CopyMemory	(verts,V,verts_count*sizeof(Fvector));
+    std::memcpy(verts,V,verts_count*sizeof(Fvector));
 	
 	// tris
 	tris_count	= Tcnt;
 	tris		= CALLOC(TRI,tris_count);
-	CopyMemory	(tris,T,tris_count*sizeof(TRI));
+    std::memcpy(tris,T,tris_count*sizeof(TRI));
 
 	// callback
 	if (bc)		bc	(verts,Vcnt,tris,Tcnt,bcp);

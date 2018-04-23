@@ -435,7 +435,8 @@ CRenderTarget::CRenderTarget		()
 						float	ld	=	float(x)	/ float	(TEX_material_LdotN-1);
 						float	ls	=	float(y)	/ float	(TEX_material_LdotH-1) + EPS_S;
 						ls			*=	powf(ld,1/32.f);
-						float	fd,fs;
+						float	fd;
+                        float fs = 1;
 
 						switch	(slice)
 						{
@@ -449,7 +450,9 @@ CRenderTarget::CRenderTarget		()
 								}	break;
 						case 2:	{ // looks like Phong
 							fd	= ld;					// 1.0
-							fs	= powf(ls*1.01f,128.f	);
+                            for (int i = 1; i <= 128; i++)
+                                fs *= ls * 1.01f;
+							//fs	= powf(ls*1.01f,128.f	);
 								}	break;
 						case 3:	{ // looks like Metal
 							float	s0	=	_abs	(1-_abs	(0.05f*_sin(33.f*ld)+ld-ls));
