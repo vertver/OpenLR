@@ -13,8 +13,8 @@
 #include "patrol_path_storage.h"
 #include "patrol_path.h"
 #include "patrol_point.h"
-#include "patrol_path_manager_space.h"
 #include "game_graph.h"
+#include "patrol_path_manager_space.h"
 
 CALifeMonsterPatrolPathManager::CALifeMonsterPatrolPathManager	(object_type *object)
 {

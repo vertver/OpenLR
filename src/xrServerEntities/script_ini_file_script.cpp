@@ -147,7 +147,7 @@ void CScriptIniFile::script_register(lua_State *L)
 			.def("r_s32",			&CScriptIniFile::r_s32)
 			.def("r_float",			&CScriptIniFile::r_float)
 			.def("r_vector",		&CScriptIniFile::r_fvector3)
-			.def("r_line",			&::r_line, out_value(_4) + out_value(_5)),
+			.def("r_line",			&::r_line, out_value<4>() + out_value<5>()),
 
 		def("system_ini",			&get_system_ini),
 		//Alundaio: extend
@@ -158,7 +158,7 @@ void CScriptIniFile::script_register(lua_State *L)
 #ifdef XRGAME_EXPORTS
 		def("game_ini",				&get_game_ini),
 #endif // XRGAME_EXPORTS
-		def("create_ini_file", (CScriptIniFile*(*)(LPCSTR))(&create_ini_file), adopt(result)),
-		def("create_ini_file", (CScriptIniFile*(*)(LPCSTR,LPCSTR))(&create_ini_file), adopt(result))
+		def("create_ini_file", (CScriptIniFile*(*)(LPCSTR))(&create_ini_file), adopt<result>()),
+		def("create_ini_file", (CScriptIniFile*(*)(LPCSTR,LPCSTR))(&create_ini_file), adopt<result>())
 	];
 }

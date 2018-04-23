@@ -135,19 +135,6 @@ void atlas_submit_queue::do_atlas_best_results(gamespy_gp::profile const * profi
 
 void atlas_submit_queue::do_atlas_submit_all(gamespy_gp::profile const * profile)
 {
-	VERIFY(m_stats_submitter);
-	VERIFY(!m_atlas_in_process);
-
-	gamespy_profile::profile_store* tmp_store	= MainMenu()->GetProfileStore();
-	VERIFY(tmp_store);
-	
-	m_atlas_in_process = true;
-	m_stats_submitter->submit_all(
-		&tmp_store->get_awards(),
-		&tmp_store->get_best_scores(),
-		profile,
-		m_atlas_submitted
-	);
 }
 
 void __stdcall atlas_submit_queue::atlas_submitted(bool result, char const * err_string)

@@ -159,17 +159,6 @@ void CCC_GameSpyPrintProfile::Execute(LPCSTR args)
 				i->second.m_count,
 				rdate_str);
 		}
-
-		Msg("- Best player scores:");
-		gamespy_profile::all_best_scores_t const & tmp_best_scores = tmp_store->get_best_scores();
-		for (gamespy_profile::all_best_scores_t::const_iterator i = tmp_best_scores.begin(),
-			ie = tmp_best_scores.end(); i < ie; ++i)
-		{
-			Msg("- (score: %s), (score: %d)", 
-				gamespy_profile::get_best_score_name(static_cast<gamespy_profile::enum_best_score_type>(i->first)),
-				i->second
-			);
-		}
 	} else
 	{
 		Msg("- No profile. You are not loged in.");

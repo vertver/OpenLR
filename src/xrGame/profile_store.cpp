@@ -5,7 +5,6 @@
 #include "MainMenu.h"
 #include "login_manager.h"
 #include "awards_store.h"
-#include "best_scores_store.h"
 #include "stats_submitter.h"
 #include "atlas_submit_queue.h"
 
@@ -25,7 +24,6 @@ profile_store::profile_store(CGameSpy_Full* fullgs_obj) :
 	m_sake_obj			= fullgs_obj->GetGameSpySAKE();
 
 	m_awards_store		= xr_new<awards_store>(fullgs_obj);
-	m_best_scores_store	= xr_new<best_scores_store>(fullgs_obj);
 }
 
 
@@ -35,19 +33,12 @@ profile_store::~profile_store()
 		Engine.Sheduler.Unregister(this);
 	
 	xr_delete(m_awards_store);
-	xr_delete(m_best_scores_store);
 }
 
 all_awards_t const & profile_store::get_awards()
 {
 	VERIFY(m_awards_store);
 	return m_awards_store->get_player_awards();
-}
-
-all_best_scores_t const & profile_store::get_best_scores()
-{
-	VERIFY(m_best_scores_store);
-	return m_best_scores_store->get_player_best_scores();
 }
 
 void profile_store::shedule_Update(u32 dt)
@@ -161,39 +152,12 @@ void profile_store::load_profile(store_operation_cb progress_indicator_cb)
 		R_ASSERT(tmp_curr_prof);
 		m_valid_ltx = (tmp_profile_id == tmp_curr_prof->m_profile_id);
 	}
-
-	m_awards_store->reset_awards		();
-	m_best_scores_store->reset_scores	();
-
-	merge_fields(
-		m_best_scores_store->get_field_names(),
-		m_awards_store->get_field_names());
 	
 	
 	m_progress_indicator		(true, "mp_loading_awards");
 	//m_progress_indicator		(true, "mp_loading_best_scores"); - merged
 	Engine.Sheduler.Register	(this, FALSE);
 	load_profile_fields			();
-}
-
-void profile_store::merge_fields(best_scores_store::best_fields_names_t const & best_results,
-								 awards_store::award_fields_names_t const & awards_fields)
-{
-	unsigned int i = 0;
-	for (unsigned int bf = 0; bf < best_scores_store::fields_count; ++bf)
-	{
-		m_field_names_store[i] = best_results[bf];
-		++i;
-	}
-	for (unsigned int af = 0; af < awards_store::fields_count; ++af)
-	{
-		m_field_names_store[i] = awards_fields[af];
-		++i;
-	}
-	VERIFY(i == merged_fields_count);
-	m_get_records_input.mNumFields	= i; 
-	m_get_records_input.mFieldNames = m_field_names_store;
-	m_get_records_input.mTableId	= profile_table_name;
 }
 
 void profile_store::load_profile_fields()
@@ -218,19 +182,6 @@ void __cdecl profile_store::get_my_fields_cb(SAKE sake,
 											 void * outputData,
 											 void * userData)
 {
-	profile_store* my_inst = static_cast<profile_store*>(userData);
-	if (result != SAKERequestResult_SUCCESS)
-	{
-		my_inst->loaded_fields(false, CGameSpy_SAKE::TryToTranslate(result).c_str());
-		return;
-	}
-	SAKEGetMyRecordsOutput*	tmp_out		= static_cast<SAKEGetMyRecordsOutput*>(
-		outputData
-	);
-	VERIFY(tmp_out);
-	my_inst->m_awards_store->process_aw_out_response(tmp_out, merged_fields_count);
-	my_inst->m_best_scores_store->process_scores_out_response(tmp_out, merged_fields_count);
-	my_inst->loaded_fields(true, "");
 }
 
 void profile_store::loaded_fields(bool const result, char const * err_descr)
@@ -254,14 +205,6 @@ void profile_store::loaded_fields(bool const result, char const * err_descr)
 		return;
 	}
 	
-	if (m_valid_ltx)
-	{
-		m_awards_store->load_awards_from_ltx(m_dsigned_reader.get_ltx());
-		m_best_scores_store->load_best_scores_from_ltx(m_dsigned_reader.get_ltx());
-		m_awards_store->merge_sake_to_ltx_awards();
-		m_best_scores_store->merge_sake_to_ltx_best_scores();
-		check_sake_actuality();
-	}
 	tmp_cb(true, "");
 }
 
@@ -294,8 +237,7 @@ static u32 const actuality_update_time = 3600;
 
 void profile_store::check_sake_actuality()
 {
-	if (!m_awards_store->is_sake_equal_to_file() ||
-		!m_best_scores_store->is_sake_equal_to_file())
+	if (!m_awards_store->is_sake_equal_to_file())
 	{
 		__time32_t	current_time;
 		_time32		(&current_time);

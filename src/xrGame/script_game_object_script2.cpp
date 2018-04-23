@@ -27,14 +27,16 @@
 #include "relation_registry.h"
 #include "danger_object.h"
 #include "smart_cover_object.h"
+#include "detail_path_manager_space.h"
+#include "patrol_path_manager_space.h"
 
 using namespace luabind;
 
 extern CScriptActionPlanner *script_action_planner(CScriptGameObject *obj);
 
-class_<CScriptGameObject> &script_register_game_object1(class_<CScriptGameObject> &instance)
+class_<CScriptGameObject> script_register_game_object1(class_<CScriptGameObject> &&instance)
 {
-	instance
+    return std::move(instance)
 		.enum_("relation")
 		[
 			value("friend",					int(ALife::eRelationTypeFriend)),
@@ -120,7 +122,7 @@ class_<CScriptGameObject> &script_register_game_object1(class_<CScriptGameObject
 		
 		.def("rank",						&CScriptGameObject::GetRank)
 		.def("command",						&CScriptGameObject::AddAction)
-		.def("action",						&CScriptGameObject::GetCurrentAction, adopt(result))
+		.def("action",						&CScriptGameObject::GetCurrentAction, adopt<result>())
 		.def("object_count",				&CScriptGameObject::GetInventoryObjectCount)
 		.def("object",						(CScriptGameObject *(CScriptGameObject::*)(LPCSTR))(&CScriptGameObject::GetObjectByName))
 		.def("object",						(CScriptGameObject *(CScriptGameObject::*)(int))(&CScriptGameObject::GetObjectByIndex))
@@ -180,7 +182,7 @@ class_<CScriptGameObject> &script_register_game_object1(class_<CScriptGameObject
 		.def("get_enemy_strength",			&CScriptGameObject::GetEnemyStrength)
 		.def("get_sound_info",				&CScriptGameObject::GetSoundInfo)
 		.def("get_monster_hit_info",		&CScriptGameObject::GetMonsterHitInfo)
-		.def("bind_object",					&CScriptGameObject::bind_object,adopt(_2))
+		.def("bind_object",					&CScriptGameObject::bind_object,adopt<2>())
 		.def("motivation_action_manager",	&script_action_planner)
 
 		// basemonster
@@ -358,16 +360,16 @@ class_<CScriptGameObject> &script_register_game_object1(class_<CScriptGameObject
 		.def("set_smart_cover_target_default",			&CScriptGameObject::set_smart_cover_target_default)
 
 		.def("idle_min_time",				(void (CScriptGameObject::*)	(float))&CScriptGameObject::idle_min_time)
-		.def("idle_min_time",				(float (CScriptGameObject::*)	() const)&CScriptGameObject::idle_min_time)
+		.def("idle_min_time",				(const float (CScriptGameObject::*)	() const)&CScriptGameObject::idle_min_time)
 
 		.def("idle_max_time",				(void (CScriptGameObject::*)	(float))&CScriptGameObject::idle_max_time)
-		.def("idle_max_time",				(float (CScriptGameObject::*)	() const)&CScriptGameObject::idle_max_time)
+		.def("idle_max_time",				(const float (CScriptGameObject::*)	() const)&CScriptGameObject::idle_max_time)
 
 		.def("lookout_min_time",			(void (CScriptGameObject::*)	(float))&CScriptGameObject::lookout_min_time)
-		.def("lookout_min_time",			(float (CScriptGameObject::*)	() const)&CScriptGameObject::lookout_min_time)
+		.def("lookout_min_time",			(const float (CScriptGameObject::*)	() const)&CScriptGameObject::lookout_min_time)
 
 		.def("lookout_max_time",			(void (CScriptGameObject::*)	(float))&CScriptGameObject::lookout_max_time)
-		.def("lookout_max_time",			(float (CScriptGameObject::*)	() const)&CScriptGameObject::lookout_max_time)
+		.def("lookout_max_time",			(const float (CScriptGameObject::*)	() const)&CScriptGameObject::lookout_max_time)
 
 		.def("in_loophole_fov",				&CScriptGameObject::in_loophole_fov)
 		.def("in_current_loophole_fov",		&CScriptGameObject::in_current_loophole_fov)
@@ -396,5 +398,5 @@ class_<CScriptGameObject> &script_register_game_object1(class_<CScriptGameObject
 		.def("is_door_blocked_by_npc",			&CScriptGameObject::is_door_blocked_by_npc)
 		.def("is_weapon_going_to_be_strapped",	&CScriptGameObject::is_weapon_going_to_be_strapped)
 
-	;return	(instance);
+	;
 }

@@ -7,7 +7,6 @@
 #include "script_export_space.h"
 #include "queued_async_method.h"
 #include "gsc_dsigned_ltx.h"
-#include "best_scores_store.h"
 #include "awards_store.h"
 
 
@@ -19,7 +18,6 @@ namespace gamespy_profile
 {
 
 class awards_store;
-class best_scores_store;
 
 class profile_store : 
 	public ISheduled,
@@ -40,10 +38,8 @@ public:
 	virtual float			shedule_Scale	()			{ return 1.0f; };
 	
 	all_awards_t const &		get_awards		();
-	all_best_scores_t const &	get_best_scores	();
 	
 	awards_store*				get_awards_store		() { return m_awards_store; };
-	best_scores_store*			get_best_scores_store	() { return m_best_scores_store; };
 private:
 	typedef			parameters_tuple1<store_operation_cb>	load_prof_params_t;
 	void			load_current_profile_raw	(load_prof_params_t const & args,
@@ -69,16 +65,9 @@ private:
 	gsc_dsigned_ltx_reader	m_dsigned_reader;
 	bool					m_valid_ltx;
 	awards_store*			m_awards_store;
-	best_scores_store*		m_best_scores_store;
-
-
-	static unsigned int const merged_fields_count = best_scores_store::fields_count + awards_store::fields_count;
-	typedef	char*		merged_fields_names_t[merged_fields_count];
 
 	void				load_profile				(store_operation_cb progress_indicator_cb);
-	void				merge_fields				(best_scores_store::best_fields_names_t const & best_results,
-													 awards_store::award_fields_names_t const & awards_fields);
-	merged_fields_names_t	m_field_names_store;
+
 	SAKEGetMyRecordsInput	m_get_records_input;
 	
 	void				load_profile_fields			();
