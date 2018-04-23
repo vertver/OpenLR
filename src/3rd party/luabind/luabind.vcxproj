@@ -1,0 +1,609 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug_NEW|Win32">
+      <Configuration>Debug_NEW</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug_NEW|x64">
+      <Configuration>Debug_NEW</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{276FFF9E-96A1-32D6-87A5-0EBAB89E781E}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0.10586.0</WindowsTargetPlatformVersion>
+    <Keyword>Win32Proj</Keyword>
+    <Platform>x64</Platform>
+    <ProjectName>luabind</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_NEW|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_NEW|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug_NEW|x64'">
+    <Import Project="..\..\Common.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="..\..\Common.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_NEW|Win32'" Label="PropertySheets">
+    <Import Project="..\..\Common.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="..\..\Common.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="..\..\Common.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="..\..\Common.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(xrBinDir)</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug_NEW|x64'">$(xrBinDir)</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(xrBinDir)bin_dbg\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(xrIntDir)$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug_NEW|x64'">$(xrIntDir)$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(xrIntDir)$(ProjectName)\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">luabind</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">luabind</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug_NEW|x64'">luabind</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">luabind</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug_NEW|Win32'">luabind</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">luabind</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.dll</TargetExt>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.dll</TargetExt>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug_NEW|x64'">.dll</TargetExt>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.dll</TargetExt>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug_NEW|Win32'">.dll</TargetExt>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.dll</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug_NEW|x64'">true</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug_NEW|Win32'">true</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</GenerateManifest>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</GenerateManifest>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug_NEW|x64'">true</GenerateManifest>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</GenerateManifest>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug_NEW|Win32'">true</GenerateManifest>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</GenerateManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(xrGameDir)bin_rel\</OutDir>
+    <IntDir>$(xrIntDir)$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_NEW|Win32'">
+    <OutDir>$(xrBinDir)bin_dbg_new\</OutDir>
+    <IntDir>$(xrIntDir)$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(xrBinDir)bin_dbg\</OutDir>
+    <IntDir>$(xrIntDir)$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)luabind\include;$(xr3rdPartyDir)LuaJIT2;$(xr3rdPartyDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /await</AdditionalOptions>
+      <AssemblerListingLocation>Debug/</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <DebugInformationFormat>None</DebugInformationFormat>
+      <DisableSpecificWarnings>4100</DisableSpecificWarnings>
+      <ExceptionHandling>
+      </ExceptionHandling>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_HAS_EXCEPTIONS=0;LUABIND_BUILDING;_SECURE_SCL=0;luabind_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;DEBUG;LUABIND_BUILDING;_SECURE_SCL=0;CMAKE_INTDIR=\"Debug\";luabind_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\X_Ray\imdex\code\3rd-party;C:\X_Ray\imdex\code\engine;C:\X_Ray\imdex\code\utils;C:\X_Ray\imdex\code\3rd-party\luabind\luabind\include;C:\X_Ray\imdex\code\3rd-party\luabind;C:\X_Ray\imdex\code\3rd-party\luabind\..;C:\X_Ray\imdex\code\3rd-party\luajit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\X_Ray\imdex\code\3rd-party;C:\X_Ray\imdex\code\engine;C:\X_Ray\imdex\code\utils;C:\X_Ray\imdex\code\3rd-party\luabind\luabind\include;C:\X_Ray\imdex\code\3rd-party\luabind;C:\X_Ray\imdex\code\3rd-party\luabind\..;C:\X_Ray\imdex\code\3rd-party\luajit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalDependencies>LuaJIT2.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(xrLibDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>$(xrLibDir)$(TargetName).lib</ImportLibrary>
+      <ProgramDataBaseFile>$(OutDir)$(TargetName).pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+      <Version>
+      </Version>
+      <LargeAddressAware />
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>
+      </Message>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)luabind\include;$(SolutionDir)3rd party\luajit-2\src\;$(xr3rdPartyDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /await</AdditionalOptions>
+      <AssemblerListingLocation>Debug/</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4100</DisableSpecificWarnings>
+      <ExceptionHandling>
+      </ExceptionHandling>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_HAS_EXCEPTIONS=0;LUABIND_BUILDING;_SECURE_SCL=0;luabind_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;DEBUG;LUABIND_BUILDING;_SECURE_SCL=0;CMAKE_INTDIR=\"Debug\";luabind_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\X_Ray\imdex\code\3rd-party;C:\X_Ray\imdex\code\engine;C:\X_Ray\imdex\code\utils;C:\X_Ray\imdex\code\3rd-party\luabind\luabind\include;C:\X_Ray\imdex\code\3rd-party\luabind;C:\X_Ray\imdex\code\3rd-party\luabind\..;C:\X_Ray\imdex\code\3rd-party\luajit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\X_Ray\imdex\code\3rd-party;C:\X_Ray\imdex\code\engine;C:\X_Ray\imdex\code\utils;C:\X_Ray\imdex\code\3rd-party\luabind\luabind\include;C:\X_Ray\imdex\code\3rd-party\luabind;C:\X_Ray\imdex\code\3rd-party\luabind\..;C:\X_Ray\imdex\code\3rd-party\luajit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalDependencies>lua51.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)3rd party\luajit-2\bin\$(PlatformShortName)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>
+      </AdditionalOptions>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>$(xrLibDir)$(TargetName).lib</ImportLibrary>
+      <ProgramDataBaseFile>$(OutDir)$(TargetName).pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+      <Version>
+      </Version>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+    <PostBuildEvent>
+      <Command>copy / Y "$(SolutionDir)3rd party\luajit-2\bin\x86\lua51.dll" "$(OutDir)lua51.dll"</Command>
+      <Message>Copy lua51.dll to output directory</Message>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_NEW|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)luabind\include;$(xr3rdPartyDir)LuaJIT2;$(xr3rdPartyDir)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /await</AdditionalOptions>
+      <AssemblerListingLocation>Debug/</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4100</DisableSpecificWarnings>
+      <ExceptionHandling>
+      </ExceptionHandling>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;LUABIND_BUILDING;_SECURE_SCL=0;CMAKE_INTDIR="Debug";luabind_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;DEBUG;LUABIND_BUILDING;_SECURE_SCL=0;CMAKE_INTDIR=\"Debug\";luabind_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\X_Ray\imdex\code\3rd-party;C:\X_Ray\imdex\code\engine;C:\X_Ray\imdex\code\utils;C:\X_Ray\imdex\code\3rd-party\luabind\luabind\include;C:\X_Ray\imdex\code\3rd-party\luabind;C:\X_Ray\imdex\code\3rd-party\luabind\..;C:\X_Ray\imdex\code\3rd-party\luajit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\X_Ray\imdex\code\3rd-party;C:\X_Ray\imdex\code\engine;C:\X_Ray\imdex\code\utils;C:\X_Ray\imdex\code\3rd-party\luabind\luabind\include;C:\X_Ray\imdex\code\3rd-party\luabind;C:\X_Ray\imdex\code\3rd-party\luabind\..;C:\X_Ray\imdex\code\3rd-party\luajit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalDependencies>LuaJIT2.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(xrLibDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>$(xrLibDir)$(TargetName).lib</ImportLibrary>
+      <ProgramDataBaseFile>$(OutDir)$(TargetName).pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+      <Version>
+      </Version>
+      <LargeAddressAware />
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+      <Message>
+      </Message>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)luabind\include;$(xr3rdPartyDir)LuaJIT2;$(xr3rdPartyDir);</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /await</AdditionalOptions>
+      <AssemblerListingLocation>Debug/</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4100</DisableSpecificWarnings>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;DEBUG;LUABIND_BUILDING;_SECURE_SCL=0;CMAKE_INTDIR="Debug";luabind_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;DEBUG;LUABIND_BUILDING;_SECURE_SCL=0;CMAKE_INTDIR=\"Debug\";luabind_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\X_Ray\imdex\code\3rd-party;C:\X_Ray\imdex\code\engine;C:\X_Ray\imdex\code\utils;C:\X_Ray\imdex\code\3rd-party\luabind\luabind\include;C:\X_Ray\imdex\code\3rd-party\luabind;C:\X_Ray\imdex\code\3rd-party\luabind\..;C:\X_Ray\imdex\code\3rd-party\luajit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\X_Ray\imdex\code\3rd-party;C:\X_Ray\imdex\code\engine;C:\X_Ray\imdex\code\utils;C:\X_Ray\imdex\code\3rd-party\luabind\luabind\include;C:\X_Ray\imdex\code\3rd-party\luabind;C:\X_Ray\imdex\code\3rd-party\luabind\..;C:\X_Ray\imdex\code\3rd-party\luajit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalDependencies>lua51.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(xr3rdPartyDir)luajit-2\bin\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>$(xrLibDir)$(TargetName).lib</ImportLibrary>
+      <ProgramDataBaseFile>$(OutDir)$(TargetName).pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+      <Version>
+      </Version>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+      <Message>
+      </Message>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_NEW|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)luabind\include;$(SolutionDir)3rd party\luajit-2\src\;$(xr3rdPartyDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /await</AdditionalOptions>
+      <AssemblerListingLocation>Debug/</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4100</DisableSpecificWarnings>
+      <ExceptionHandling>
+      </ExceptionHandling>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_HAS_EXCEPTIONS=0;LUABIND_BUILDING;_SECURE_SCL=0;luabind_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;DEBUG;LUABIND_BUILDING;_SECURE_SCL=0;CMAKE_INTDIR=\"Debug\";luabind_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\X_Ray\imdex\code\3rd-party;C:\X_Ray\imdex\code\engine;C:\X_Ray\imdex\code\utils;C:\X_Ray\imdex\code\3rd-party\luabind\luabind\include;C:\X_Ray\imdex\code\3rd-party\luabind;C:\X_Ray\imdex\code\3rd-party\luabind\..;C:\X_Ray\imdex\code\3rd-party\luajit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\X_Ray\imdex\code\3rd-party;C:\X_Ray\imdex\code\engine;C:\X_Ray\imdex\code\utils;C:\X_Ray\imdex\code\3rd-party\luabind\luabind\include;C:\X_Ray\imdex\code\3rd-party\luabind;C:\X_Ray\imdex\code\3rd-party\luabind\..;C:\X_Ray\imdex\code\3rd-party\luajit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalDependencies>lua51.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)3rd party\luajit-2\bin\$(PlatformShortName)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>
+      </AdditionalOptions>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>$(xrLibDir)$(TargetName).lib</ImportLibrary>
+      <ProgramDataBaseFile>$(OutDir)$(TargetName).pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+      <Version>
+      </Version>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+    <PostBuildEvent>
+      <Message>Copy lua51.dll to output directory</Message>
+      <Command>copy / Y "$(SolutionDir)3rd party\luajit-2\bin\x86\lua51.dll" "$(OutDir)lua51.dll"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)luabind\include;$(SolutionDir)3rd party\luajit-2\src\;$(xr3rdPartyDir)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /await</AdditionalOptions>
+      <AssemblerListingLocation>Debug/</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4100</DisableSpecificWarnings>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;DEBUG;LUABIND_BUILDING;_SECURE_SCL=0;CMAKE_INTDIR="Debug";luabind_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;DEBUG;LUABIND_BUILDING;_SECURE_SCL=0;CMAKE_INTDIR=\"Debug\";luabind_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\X_Ray\imdex\code\3rd-party;C:\X_Ray\imdex\code\engine;C:\X_Ray\imdex\code\utils;C:\X_Ray\imdex\code\3rd-party\luabind\luabind\include;C:\X_Ray\imdex\code\3rd-party\luabind;C:\X_Ray\imdex\code\3rd-party\luabind\..;C:\X_Ray\imdex\code\3rd-party\luajit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\X_Ray\imdex\code\3rd-party;C:\X_Ray\imdex\code\engine;C:\X_Ray\imdex\code\utils;C:\X_Ray\imdex\code\3rd-party\luabind\luabind\include;C:\X_Ray\imdex\code\3rd-party\luabind;C:\X_Ray\imdex\code\3rd-party\luabind\..;C:\X_Ray\imdex\code\3rd-party\luajit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalDependencies>lua51.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)3rd party\luajit-2\bin\$(PlatformShortName)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>
+      </AdditionalOptions>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>$(xrLibDir)$(TargetName).lib</ImportLibrary>
+      <ProgramDataBaseFile>$(OutDir)$(TargetName).pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+      <Version>
+      </Version>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+    <PostBuildEvent>
+      <Message>Copy lua51.dll to output directory</Message>
+      <Command>copy / Y "$(SolutionDir)3rd party\luajit-2\bin\x86\lua51.dll" "$(OutDir)lua51.dll"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="luabind\src\class.cpp" />
+    <ClCompile Include="luabind\src\class_info.cpp" />
+    <ClCompile Include="luabind\src\class_registry.cpp" />
+    <ClCompile Include="luabind\src\class_rep.cpp" />
+    <ClCompile Include="luabind\src\create_class.cpp" />
+    <ClCompile Include="luabind\src\error.cpp" />
+    <ClCompile Include="luabind\src\find_best_match.cpp" />
+    <ClCompile Include="luabind\src\function.cpp" />
+    <ClCompile Include="luabind\src\implicit_cast.cpp" />
+    <ClCompile Include="luabind\src\link_compatibility.cpp" />
+    <ClCompile Include="luabind\src\object.cpp" />
+    <ClCompile Include="luabind\src\object_rep.cpp" />
+    <ClCompile Include="luabind\src\open.cpp" />
+    <ClCompile Include="luabind\src\pcall.cpp" />
+    <ClCompile Include="luabind\src\ref.cpp" />
+    <ClCompile Include="luabind\src\scope.cpp" />
+    <ClCompile Include="luabind\src\stack_content_by_name.cpp" />
+    <ClCompile Include="luabind\src\weak_ref.cpp" />
+    <ClCompile Include="luabind\src\wrapper_base.cpp" />
+    <ClCompile Include="luabind_memory.cpp" />
+    <ClCompile Include="pch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug_NEW|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug_NEW|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClInclude Include="luabind\include\luabind\adopt_policy.hpp" />
+    <ClInclude Include="luabind\include\luabind\back_reference.hpp" />
+    <ClInclude Include="luabind\include\luabind\back_reference_fwd.hpp" />
+    <ClInclude Include="luabind\include\luabind\class.hpp" />
+    <ClInclude Include="luabind\include\luabind\class_info.hpp" />
+    <ClInclude Include="luabind\include\luabind\config.hpp" />
+    <ClInclude Include="luabind\include\luabind\copy_policy.hpp" />
+    <ClInclude Include="luabind\include\luabind\dependency_policy.hpp" />
+    <ClInclude Include="luabind\include\luabind\detail\calc_arity.hpp" />
+    <ClInclude Include="luabind\include\luabind\detail\calc_has_arg.hpp" />
+    <ClInclude Include="luabind\include\luabind\detail\call.hpp" />
+    <ClInclude Include="luabind\include\luabind\detail\call_function.hpp" />
+    <ClInclude Include="luabind\include\luabind\detail\call_member.hpp" />
+    <ClInclude Include="luabind\include\luabind\detail\class_cache.hpp" />
+    <ClInclude Include="luabind\include\luabind\detail\class_registry.hpp" />
+    <ClInclude Include="luabind\include\luabind\detail\class_rep.hpp" />
+    <ClInclude Include="luabind\include\luabind\detail\class_rep_scope.hpp" />
+    <ClInclude Include="luabind\include\luabind\detail\constructor.hpp" />
+    <ClInclude Include="luabind\include\luabind\detail\construct_rep.hpp" />
+    <ClInclude Include="luabind\include\luabind\detail\convert_to_lua.hpp" />
+    <ClInclude Include="luabind\include\luabind\detail\debug.hpp" />
+    <ClInclude Include="luabind\include\luabind\detail\decorate_type.hpp" />
+    <ClInclude Include="luabind\include\luabind\detail\enum_maker.hpp" />
+    <ClInclude Include="luabind\include\luabind\detail\find_best_match.hpp" />
+    <ClInclude Include="luabind\include\luabind\detail\garbage_collector.hpp" />
+    <ClInclude Include="luabind\include\luabind\detail\get_overload_signature.hpp" />
+    <ClInclude Include="luabind\include\luabind\detail\get_signature.hpp" />
+    <ClInclude Include="luabind\include\luabind\detail\implicit_cast.hpp" />
+    <ClInclude Include="luabind\include\luabind\detail\is_indirect_const.hpp" />
+    <ClInclude Include="luabind\include\luabind\detail\link_compatibility.hpp" />
+    <ClInclude Include="luabind\include\luabind\detail\method_rep.hpp" />
+    <ClInclude Include="luabind\include\luabind\detail\object_funs.hpp" />
+    <ClInclude Include="luabind\include\luabind\detail\object_rep.hpp" />
+    <ClInclude Include="luabind\include\luabind\detail\open.hpp" />
+    <ClInclude Include="luabind\include\luabind\detail\operator_id.hpp" />
+    <ClInclude Include="luabind\include\luabind\detail\other.hpp" />
+    <ClInclude Include="luabind\include\luabind\detail\overload_rep.hpp" />
+    <ClInclude Include="luabind\include\luabind\detail\overload_rep_base.hpp" />
+    <ClInclude Include="luabind\include\luabind\detail\overload_rep_impl.hpp" />
+    <ClInclude Include="luabind\include\luabind\detail\pcall.hpp" />
+    <ClInclude Include="luabind\include\luabind\detail\pointee_sizeof.hpp" />
+    <ClInclude Include="luabind\include\luabind\detail\pointee_typeid.hpp" />
+    <ClInclude Include="luabind\include\luabind\detail\policy.hpp" />
+    <ClInclude Include="luabind\include\luabind\detail\policy_cons.hpp" />
+    <ClInclude Include="luabind\include\luabind\detail\primitives.hpp" />
+    <ClInclude Include="luabind\include\luabind\detail\property.hpp" />
+    <ClInclude Include="luabind\include\luabind\detail\ref.hpp" />
+    <ClInclude Include="luabind\include\luabind\detail\signature_match.hpp" />
+    <ClInclude Include="luabind\include\luabind\detail\stack_utils.hpp" />
+    <ClInclude Include="luabind\include\luabind\detail\typetraits.hpp" />
+    <ClInclude Include="luabind\include\luabind\discard_result_policy.hpp" />
+    <ClInclude Include="luabind\include\luabind\error.hpp" />
+    <ClInclude Include="luabind\include\luabind\function.hpp" />
+    <ClInclude Include="luabind\include\luabind\functor.hpp" />
+    <ClInclude Include="luabind\include\luabind\iterator_policy.hpp" />
+    <ClInclude Include="luabind\include\luabind\luabind.hpp" />
+    <ClInclude Include="luabind\include\luabind\luabind_delete.h" />
+    <ClInclude Include="luabind\include\luabind\luabind_memory.h" />
+    <ClInclude Include="luabind\include\luabind\luabind_memory_allocator.h" />
+    <ClInclude Include="luabind\include\luabind\luabind_memory_allocator_inline.h" />
+    <ClInclude Include="luabind\include\luabind\luabind_memory_manager_generator.h" />
+    <ClInclude Include="luabind\include\luabind\luabind_types.h" />
+    <ClInclude Include="luabind\include\luabind\lua_include.hpp" />
+    <ClInclude Include="luabind\include\luabind\object.hpp" />
+    <ClInclude Include="luabind\include\luabind\open.hpp" />
+    <ClInclude Include="luabind\include\luabind\operator.hpp" />
+    <ClInclude Include="luabind\include\luabind\out_value_policy.hpp" />
+    <ClInclude Include="luabind\include\luabind\prefix.hpp" />
+    <ClInclude Include="luabind\include\luabind\raw_policy.hpp" />
+    <ClInclude Include="luabind\include\luabind\return_reference_to_policy.hpp" />
+    <ClInclude Include="luabind\include\luabind\scope.hpp" />
+    <ClInclude Include="luabind\include\luabind\weak_ref.hpp" />
+    <ClInclude Include="luabind\include\luabind\wrapper_base.hpp" />
+    <ClInclude Include="luabind\include\luabind\yield_policy.hpp" />
+    <ClInclude Include="pch.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LuaJIT2\LuaJIT2.vcxproj">
+      <Project>{b8d6fbc5-5766-4263-877a-f64bdc795fe0}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <None Include="C:\X_Ray\imdex\code\3rd-party\imdexlib\flag_set.hpp">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="C:\X_Ray\imdex\code\3rd-party\imdexlib\identity.hpp">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="C:\X_Ray\imdex\code\3rd-party\imdexlib\is_reference_wrapper.hpp">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="C:\X_Ray\imdex\code\3rd-party\imdexlib\mpl.hpp">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="C:\X_Ray\imdex\code\3rd-party\imdexlib\option.hpp">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="C:\X_Ray\imdex\code\3rd-party\imdexlib\preprocessor.hpp">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="C:\X_Ray\imdex\code\3rd-party\imdexlib\scope_guard.hpp">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="C:\X_Ray\imdex\code\3rd-party\imdexlib\traits.hpp">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="C:\X_Ray\imdex\code\3rd-party\imdexlib\typelist.hpp">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="C:\X_Ray\imdex\code\3rd-party\imdexlib\uncaught_exceptions_counter.hpp">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="C:\X_Ray\imdex\code\3rd-party\imdexlib\utility.hpp">
+      <Filter>Header Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{8261A365-DBE8-3EA5-892D-B9B44EC38417}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="fast_dynamic_cast.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="empty_type.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="array_view.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="flat_map.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="string_ref.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
