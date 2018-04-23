@@ -22,6 +22,8 @@ CParticlesObject::CParticlesObject	(LPCSTR p_name, BOOL bAutoRemove, bool destro
 
 void CParticlesObject::Init	(LPCSTR p_name, IRender_Sector* S, BOOL bAutoRemove)
 {
+	if (strstr(p_name, "barrel"))
+		Msg("its barrel!");
 	m_bLooped				= false;
 	m_bStopping				= false;
 	m_bAutoRemove			= bAutoRemove;

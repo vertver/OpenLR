@@ -10,7 +10,7 @@
     <xrLibDir>$(xrLibRootDir)$(Configuration)\</xrLibDir>
     <xrIntDir>$(SolutionDir)..\_build\intermediate\$(Configuration)\</xrIntDir>
     <xrSdkDir>$(SolutionDir)..\sdk\</xrSdkDir>
-    <xrGameDir>E:\STALKER\Games\</xrGameDir>
+    <xrGameDir>$(xrBinRootDir)$(Configuration)\</xrGameDir>
     <xrGameBinDir>$(xrGameDir)bin\</xrGameBinDir>
     <xr3rdPartyDir>$(SolutionDir)3rd party\</xr3rdPartyDir>
     <dxSdkDir>$(xrSdkDir)include\dxsdk\</dxSdkDir>

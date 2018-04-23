@@ -108,6 +108,14 @@ void CPEDef::ExecuteAnimate(Particle *particles, u32 p_cnt, float dt)
 		if (f>m_Frame.m_iFrameCount)f-=m_Frame.m_iFrameCount;
 		if (f<0.f)					f+=m_Frame.m_iFrameCount;
 		m.frame						= (u16)iFloor(f*255.f);
+		if (strstr(m_Name.c_str(), "expl_benzin_05") || strstr(m_Name.c_str(), "expl_benzin_veh"))
+		{
+			Msg("CPEDef::ExecuteAnimate : %s, %u", m_Name.c_str(), i);
+			Msg("Args = p_cnt = %u, dt = %f", p_cnt, dt);
+			Msg("m_Frame : m_fSpeed = %f, m_iFrameCount = %d", m_Frame.m_fSpeed, m_Frame.m_iFrameCount);
+			Msg("speedFac = %f, f = %f m.frame = %u, m.flags = %u", speedFac, f, m.frame, m.flags.get());
+			Msg("------------------------");
+		}
 	}
 }
 
