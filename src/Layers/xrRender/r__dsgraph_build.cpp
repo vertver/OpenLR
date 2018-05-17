@@ -36,8 +36,9 @@ void R_dsgraph_structure::r_dsgraph_insert_dynamic	(dxRender_Visual *pVisual, Fv
 {
 	CRender&	RI			=	RImplementation;
 
-	if (pVisual->vis.marker	==	RI.marker)	return	;
-	pVisual->vis.marker		=	RI.marker			;
+	if (pVisual->vis.marker	==	RI.marker)	
+		return;
+	pVisual->vis.marker		=	RI.marker;
 
 #if RENDER==R_R1
 	if (RI.o.vis_intersect &&	(pVisual->vis.accept_frame!=Device.dwFrame))	return;
@@ -53,7 +54,8 @@ void R_dsgraph_structure::r_dsgraph_insert_dynamic	(dxRender_Visual *pVisual, Fv
 	// b) Should be rendered to special distort buffer in another pass
 	VERIFY						(pVisual->shader._get());
 	ShaderElement*		sh_d	= &*pVisual->shader->E[4];
-	if (RImplementation.o.distortion && sh_d && sh_d->flags.bDistort && pmask[sh_d->flags.iPriority/2]) {
+	if (RImplementation.o.distortion && sh_d && sh_d->flags.bDistort && pmask[sh_d->flags.iPriority/2])
+	{
 		mapSorted_Node* N		= mapDistort.insertInAnyWay	(distSQ);
 		N->val.ssa				= SSA;
 		N->val.pObject			= RI.val_pObject;
@@ -64,8 +66,10 @@ void R_dsgraph_structure::r_dsgraph_insert_dynamic	(dxRender_Visual *pVisual, Fv
 
 	// Select shader
 	ShaderElement*	sh		=	RImplementation.rimp_select_sh_dynamic	(pVisual,distSQ);
-	if (0==sh)								return;
-	if (!pmask[sh->flags.iPriority/2])		return;
+	if (0==sh)
+		return;
+	if (!pmask[sh->flags.iPriority/2])
+		return;
 
 	// Create common node
 	// NOTE: Invisible elements exist only in R1
@@ -152,10 +156,8 @@ void R_dsgraph_structure::r_dsgraph_insert_dynamic	(dxRender_Visual *pVisual, Fv
 	for ( u32 iPass = 0; iPass<sh->passes.size(); ++iPass)
 	{
 		// the most common node
-		//SPass&						pass	= *sh->passes.front	();
-		//mapMatrix_T&				map		= mapMatrix			[sh->flags.iPriority/2];
-		SPass&						pass	= *sh->passes[iPass];
-		mapMatrix_T&				map		= mapMatrixPasses	[sh->flags.iPriority/2][iPass];
+		SPass &pass		= *sh->passes[iPass];
+		auto &map		= mapMatrixPasses[sh->flags.iPriority / 2][iPass];
 		
 
 #ifdef USE_RESOURCE_DEBUGGER
@@ -217,12 +219,10 @@ void R_dsgraph_structure::r_dsgraph_insert_dynamic	(dxRender_Visual *pVisual, Fv
 	}
 
 #if RENDER!=R_R1
-	if (val_recorder)			{
-		Fbox3		temp		;
-		Fmatrix&	xf			= *RI.val_pTransform;
-		temp.xform	(pVisual->vis.box,xf);
-		val_recorder->push_back	(temp);
-	}
+		if (val_recorder)
+		{
+			val_recorder->push_back(pVisual->vis.box);
+		}
 #endif
 }
 
@@ -230,8 +230,9 @@ void R_dsgraph_structure::r_dsgraph_insert_static	(dxRender_Visual *pVisual)
 {
 	CRender&	RI				=	RImplementation;
 
-	if (pVisual->vis.marker		==	RI.marker)	return	;
-	pVisual->vis.marker			=	RI.marker			;
+	if (pVisual->vis.marker		==	RI.marker)	
+		return;
+	pVisual->vis.marker			=	RI.marker;
 
 #if RENDER==R_R1
 	if (RI.o.vis_intersect &&	(pVisual->vis.accept_frame!=Device.dwFrame))	return;
@@ -247,7 +248,8 @@ void R_dsgraph_structure::r_dsgraph_insert_static	(dxRender_Visual *pVisual)
 	// b) Should be rendered to special distort buffer in another pass
 	VERIFY						(pVisual->shader._get());
 	ShaderElement*		sh_d	= &*pVisual->shader->E[4];
-	if (RImplementation.o.distortion && sh_d && sh_d->flags.bDistort && pmask[sh_d->flags.iPriority/2]) {
+	if (RImplementation.o.distortion && sh_d && sh_d->flags.bDistort && pmask[sh_d->flags.iPriority/2]) 
+	{
 		mapSorted_Node* N		= mapDistort.insertInAnyWay		(distSQ);
 		N->val.ssa				= SSA;
 		N->val.pObject			= NULL;
@@ -258,11 +260,14 @@ void R_dsgraph_structure::r_dsgraph_insert_static	(dxRender_Visual *pVisual)
 
 	// Select shader
 	ShaderElement*		sh		= RImplementation.rimp_select_sh_static(pVisual,distSQ);
-	if (0==sh)								return;
-	if (!pmask[sh->flags.iPriority/2])		return;
+	if (!sh)
+		return;
+	if (!pmask[sh->flags.iPriority/2])
+		return;
 
 	// strict-sorting selection
-	if (sh->flags.bStrictB2F) {
+	if (sh->flags.bStrictB2F) 
+	{
 		mapSorted_Node* N			= mapSorted.insertInAnyWay(distSQ);
 		N->val.pObject				= NULL;
 		N->val.pVisual				= pVisual;
@@ -393,7 +398,8 @@ void R_dsgraph_structure::r_dsgraph_insert_static	(dxRender_Visual *pVisual)
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void CRender::add_leafs_Dynamic	(dxRender_Visual *pVisual)
 {
-	if (0==pVisual)				return;
+	if (!pVisual)
+		return;
 
 	// Visual is 100% visible - simply add it
 	xr_vector<dxRender_Visual*>::iterator I,E;	// it may be useful for 'hierrarhy' visual
@@ -436,7 +442,8 @@ void CRender::add_leafs_Dynamic	(dxRender_Visual *pVisual)
 			if (_use_lod)				
 			{
 				add_leafs_Dynamic			(pV->m_lod)		;
-			} else {
+			} else 
+			{
 				pV->CalculateBones			(TRUE);
 				pV->CalculateWallmarks		();		//. bug?
 				I = pV->children.begin		();
@@ -550,7 +557,8 @@ BOOL CRender::add_Dynamic(dxRender_Visual *pVisual, u32 planes)
 
 	val_pTransform->transform_tiny	(Tpos, pVisual->vis.sphere.P);
 	VIS = View->testSphere			(Tpos, pVisual->vis.sphere.R,planes);
-	if (fcvNone==VIS) return FALSE	;
+	if (fcvNone==VIS) 
+		return FALSE;
 
 	// If we get here visual is visible or partially visible
 	xr_vector<dxRender_Visual*>::iterator I,E;	// it may be usefull for 'hierrarhy' visuals
