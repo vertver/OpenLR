@@ -325,15 +325,14 @@ void execUserScript()
 
 void slowdownthread(void*)
 {
-    // Sleep (30*1000);
-    for (;;)
+    for (;;)		// infinity cycle to slow game if lower then 30 FPS
     {
         if (Device.Statistic->fFPS < 30) Sleep(1);
         if (Device.mt_bMustExit) return;
-        if (0 == pSettings) return;
-        if (0 == Console) return;
-        if (0 == pInput) return;
-        if (0 == pApp) return;
+        if (!pSettings) return;
+        if (!Console) return;
+        if (!pInput) return;
+        if (!pApp) return;
     }
 }
 void CheckPrivilegySlowdown()
@@ -367,11 +366,25 @@ void Startup()
         if (pStartup) Console->Execute(pStartup + 1);
     }
 
+	if (strstr(Core.Params, "-$"))
+	{
+		string256                buf, cmd, param;
+		sscanf(strstr(Core.Params, "-$")
+			+ 2,
+			"%[^ ] %[^ ] ",
+			cmd,
+			param);
+		strconcat(sizeof(buf),
+			buf,
+			cmd,
+			" ",
+			param);
+		Console->Execute(buf);
+	}
+
     // Initialize APP
-    //#ifndef DEDICATED_SERVER
     ShowWindow(Device.m_hWnd, SW_SHOWNORMAL);
     Device.Create();
-    //#endif
     LALib.OnCreate();
     pApp = xr_new<CApplication>();
     g_pGamePersistent = (IGame_Persistent*)NEW_INSTANCE(CLSID_GAME_PERSISTANT);
@@ -430,73 +443,9 @@ static BOOL CALLBACK logDlgProc(HWND hw, UINT msg, WPARAM wp, LPARAM lp)
     }
     return TRUE;
 }
-/*
-void test_rtc ()
-{
-CStatTimer tMc,tM,tC,tD;
-u32 bytes=0;
-tMc.FrameStart ();
-tM.FrameStart ();
-tC.FrameStart ();
-tD.FrameStart ();
-::Random.seed (0x12071980);
-for (u32 test=0; test<10000; test++)
-{
-u32 in_size = ::Random.randI(1024,256*1024);
-u32 out_size_max = rtc_csize (in_size);
-u8* p_in = xr_alloc<u8> (in_size);
-u8* p_in_tst = xr_alloc<u8> (in_size);
-u8* p_out = xr_alloc<u8> (out_size_max);
-for (u32 git=0; git<in_size; git++) p_in[git] = (u8)::Random.randI (8); // garbage
-bytes += in_size;
 
-tMc.Begin ();
-memcpy (p_in_tst,p_in,in_size);
-tMc.End ();
-
-tM.Begin ();
-CopyMemory(p_in_tst,p_in,in_size);
-tM.End ();
-
-tC.Begin ();
-u32 out_size = rtc_compress (p_out,out_size_max,p_in,in_size);
-tC.End ();
-
-tD.Begin ();
-u32 in_size_tst = rtc_decompress(p_in_tst,in_size,p_out,out_size);
-tD.End ();
-
-// sanity check
-R_ASSERT (in_size == in_size_tst);
-for (u32 tit=0; tit<in_size; tit++) R_ASSERT(p_in[tit] == p_in_tst[tit]); // garbage
-
-xr_free (p_out);
-xr_free (p_in_tst);
-xr_free (p_in);
-}
-tMc.FrameEnd (); float rMc = 1000.f*(float(bytes)/tMc.result)/(1024.f*1024.f);
-tM.FrameEnd (); float rM = 1000.f*(float(bytes)/tM.result)/(1024.f*1024.f);
-tC.FrameEnd (); float rC = 1000.f*(float(bytes)/tC.result)/(1024.f*1024.f);
-tD.FrameEnd (); float rD = 1000.f*(float(bytes)/tD.result)/(1024.f*1024.f);
-Msg ("* memcpy: %5.2f M/s (%3.1f%%)",rMc,100.f*rMc/rMc);
-Msg ("* mm-memcpy: %5.2f M/s (%3.1f%%)",rM,100.f*rM/rMc);
-Msg ("* compression: %5.2f M/s (%3.1f%%)",rC,100.f*rC/rMc);
-Msg ("* decompression: %5.2f M/s (%3.1f%%)",rD,100.f*rD/rMc);
-}
-*/
 extern void testbed(void);
 
-// video
-/*
-static HINSTANCE g_hInstance ;
-static HINSTANCE g_hPrevInstance ;
-static int g_nCmdShow ;
-void __cdecl intro_dshow_x (void*)
-{
-IntroDSHOW_wnd (g_hInstance,g_hPrevInstance,"GameData\\Stalker_Intro.avi",g_nCmdShow);
-g_bIntroFinished = TRUE ;
-}
-*/
 #define dwStickyKeysStructSize sizeof( STICKYKEYS )
 #define dwFilterKeysStructSize sizeof( FILTERKEYS )
 #define dwToggleKeysStructSize sizeof( TOGGLEKEYS )
@@ -611,97 +560,46 @@ BOOL IsOutOfVirtualMemory()
 #define VIRT_ERROR_SIZE 256
 #define VIRT_MESSAGE_SIZE 512
 
-    //SECUROM_MARKER_HIGH_SECURITY_ON(1)
+    MEMORYSTATUSEX	statex;
+    DWORD			dwPageFileInMB		= 0;
+    DWORD			dwPhysMemInMB		= 0;
+    HINSTANCE		hApp				= 0;
+    CHAR			pszError			[VIRT_ERROR_SIZE];
+	CHAR			pszMessage			[VIRT_MESSAGE_SIZE];
 
-    MEMORYSTATUSEX statex;
-    DWORD dwPageFileInMB = 0;
-    DWORD dwPhysMemInMB = 0;
-    HINSTANCE hApp = 0;
-    char pszError[VIRT_ERROR_SIZE];
-    char pszMessage[VIRT_MESSAGE_SIZE];
-
-    ZeroMemory(&statex, sizeof(MEMORYSTATUSEX));
-    statex.dwLength = sizeof(MEMORYSTATUSEX);
+    ZeroMemory				(&statex, sizeof(MEMORYSTATUSEX));
+    statex.dwLength			= sizeof(MEMORYSTATUSEX);
 
     if (!GlobalMemoryStatusEx(&statex))
-        return 0;
+        return FALSE;
 
-    dwPageFileInMB = (DWORD)(statex.ullTotalPageFile / (1024 * 1024));
-    dwPhysMemInMB = (DWORD)(statex.ullTotalPhys / (1024 * 1024));
+    dwPageFileInMB			= (DWORD)(statex.ullTotalPageFile / (1024 * 1024));
+    dwPhysMemInMB			= (DWORD)(statex.ullTotalPhys / (1024 * 1024));
 
     // Довольно отфонарное условие
     if ((dwPhysMemInMB > 500) && ((dwPageFileInMB + dwPhysMemInMB) > 2500))
-        return 0;
+        return FALSE;
 
     hApp = GetModuleHandle(NULL);
 
+	//#VERTVER: Видно, что тому человеку было больно это писать, поэтому он
+	//даже в комментариях выражает своё мнение :D
     if (!LoadString(hApp, RC_VIRT_MEM_ERROR, pszError, VIRT_ERROR_SIZE))
-        return 0;
+        return FALSE;
 
     if (!LoadString(hApp, RC_VIRT_MEM_TEXT, pszMessage, VIRT_MESSAGE_SIZE))
-        return 0;
+        return FALSE;
 
     MessageBox(NULL, pszMessage, pszError, MB_OK | MB_ICONHAND);
 
-    //SECUROM_MARKER_HIGH_SECURITY_OFF(1)
-
-    return 1;
+    return TRUE;
 }
 
 #include "xr_ioc_cmd.h"
 
-//typedef void DUMMY_STUFF (const void*,const u32&,void*);
-//XRCORE_API DUMMY_STUFF *g_temporary_stuff;
-
-//#define TRIVIAL_ENCRYPTOR_DECODER
-//#include "trivial_encryptor.h"
-
-//#define RUSSIAN_BUILD
-
-#if 0
-void foo()
-{
-    typedef std::map<int, int> TEST_MAP;
-    TEST_MAP temp;
-    temp.insert(std::make_pair(0, 0));
-    TEST_MAP::const_iterator I = temp.upper_bound(2);
-    if (I == temp.end())
-        OutputDebugString("end() returned\r\n");
-    else
-        OutputDebugString("last element returned\r\n");
-
-    typedef void* pvoid;
-
-    LPCSTR path = "d:\\network\\stalker_net2";
-    FILE* f = fopen(path, "rb");
-    int file_handle = _fileno(f);
-    u32 buffer_size = _filelength(file_handle);
-    pvoid buffer = xr_malloc(buffer_size);
-    size_t result = fread(buffer, buffer_size, 1, f);
-    R_ASSERT3(!buffer_size || (result && (buffer_size >= result)), "Cannot read from file", path);
-    fclose(f);
-
-    u32 compressed_buffer_size = rtc_csize(buffer_size);
-    pvoid compressed_buffer = xr_malloc(compressed_buffer_size);
-    u32 compressed_size = rtc_compress(compressed_buffer, compressed_buffer_size, buffer, buffer_size);
-
-    LPCSTR compressed_path = "d:\\network\\stalker_net2.rtc";
-    FILE* f1 = fopen(compressed_path, "wb");
-    fwrite(compressed_buffer, compressed_size, 1, f1);
-    fclose(f1);
-}
-#endif // 0
-
 ENGINE_API bool g_dedicated_server = false;
 
-#ifndef DEDICATED_SERVER
-
-#endif // DEDICATED_SERVER
-
-int APIENTRY WinMain_impl(HINSTANCE hInstance,
-                          HINSTANCE hPrevInstance,
-                          char* lpCmdLine,
-                          int nCmdShow)
+int WINAPI WinMain_impl(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* lpCmdLine, int nCmdShow)
 {
 #ifdef DEDICATED_SERVER
     Debug._initialize(true);
@@ -724,19 +622,16 @@ int APIENTRY WinMain_impl(HINSTANCE hInstance,
 #ifdef DEBUG
             BOOL const result =
 #endif // #ifdef DEBUG
-                heap_set_information(
-                    GetProcessHeap(),
-                    HeapCompatibilityInformation,
-                    &HeapFragValue,
-                    sizeof(HeapFragValue)
-                );
+                heap_set_information(GetProcessHeap(),
+									 HeapCompatibilityInformation,
+									 &HeapFragValue,
+									 sizeof(HeapFragValue));
 #ifdef DEBUG
             VERIFY2(result, "can't set process heap low fragmentation");
 #endif
         }
     }
 
-    // foo();
 #ifndef DEDICATED_SERVER
 
     // Check for virtual memory
@@ -768,28 +663,29 @@ int APIENTRY WinMain_impl(HINSTANCE hInstance,
     g_dedicated_server = true;
 #endif // DEDICATED_SERVER
 
-    SetThreadAffinityMask(GetCurrentThread(), 1);
+    SetThreadAffinityMask			(GetCurrentThread(), 1);
 
     // Title window
-    logoWindow = CreateDialog(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_STARTUP), 0, logDlgProc);
+    logoWindow						= CreateDialog(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_STARTUP), 0, logDlgProc);
 
-    HWND logoPicture = GetDlgItem(logoWindow, IDC_STATIC_LOGO);
+    HWND logoPicture				= GetDlgItem(logoWindow, IDC_STATIC_LOGO);
     RECT logoRect;
-    GetWindowRect(logoPicture, &logoRect);
+    GetWindowRect					(logoPicture, &logoRect);
 
-    SetWindowPos(
-        logoWindow,
+	int logoRectDeltaRightLeft		= logoRect.right - logoRect.left;
+	int logoRectDeltaTopBottom		= logoRect.bottom - logoRect.top;
+
+    SetWindowPos(logoWindow,
 #ifndef DEBUG
-        HWND_TOPMOST,
+				 HWND_TOPMOST,
 #else
-        HWND_NOTOPMOST,
+				 HWND_NOTOPMOST,
 #endif // NDEBUG
-        0,
-        0,
-        logoRect.right - logoRect.left,
-        logoRect.bottom - logoRect.top,
-        SWP_NOMOVE | SWP_SHOWWINDOW// | SWP_NOSIZE
-    );
+				 0,
+				 0,
+				 logoRectDeltaRightLeft,
+				 logoRectDeltaTopBottom,
+				 SWP_NOMOVE | SWP_SHOWWINDOW);
     UpdateWindow(logoWindow);
 
     // AVI
@@ -798,17 +694,13 @@ int APIENTRY WinMain_impl(HINSTANCE hInstance,
     g_sLaunchOnExit_app[0] = NULL;
     g_sLaunchOnExit_params[0] = NULL;
 
-    LPCSTR fsgame_ltx_name = "-fsltx ";
     string_path fsgame = "";
     //MessageBox(0, lpCmdLine, "my cmd string", MB_OK);
-    if (strstr(lpCmdLine, fsgame_ltx_name))
+    if (strstr(lpCmdLine, "-fsltx "))
     {
-        int sz = xr_strlen(fsgame_ltx_name);
-        sscanf(strstr(lpCmdLine, fsgame_ltx_name) + sz, "%[^ ] ", fsgame);
-        //MessageBox(0, fsgame, "using fsltx", MB_OK);
+        int sz = xr_strlen("-fsltx ");
+        sscanf(strstr(lpCmdLine, "-fsltx ") + sz, "%[^ ] ", fsgame);
     }
-
-    // g_temporary_stuff = &trivial_encryptor::decode;
 
     compute_build_id();
     Core._initialize("xray", NULL, TRUE, fsgame[0] ? fsgame : NULL);
@@ -872,6 +764,12 @@ int APIENTRY WinMain_impl(HINSTANCE hInstance,
             Console->Execute("renderer renderer_r2a");
         else if (strstr(Core.Params, "-r2"))
             Console->Execute("renderer renderer_r2");
+		else if (strstr(Core.Params, "-r2.5"))
+			Console->Execute("renderer renderer_r2.5");
+		else if (strstr(Core.Params, "-r3"))
+			Console->Execute("renderer renderer_r3");
+		else if (strstr(Core.Params, "-r4"))
+			Console->Execute("renderer renderer_r4");
         else
         {
             CCC_LoadCFG_custom* pTmp = xr_new<CCC_LoadCFG_custom>("renderer ");
@@ -881,15 +779,13 @@ int APIENTRY WinMain_impl(HINSTANCE hInstance,
 #else
         Console->Execute("renderer renderer_r1");
 #endif
-        //. InitInput ( );
-        Engine.External.Initialize();
-        Console->Execute("stat_memory");
+		Engine.External.Initialize();
 
         Startup();
         Core._destroy();
 
         // check for need to execute something external
-        if (/*xr_strlen(g_sLaunchOnExit_params) && */xr_strlen(g_sLaunchOnExit_app))
+        if (xr_strlen(g_sLaunchOnExit_app))
         {
             //CreateProcess need to return results to next two structures
             STARTUPINFO si;
@@ -936,22 +832,6 @@ int APIENTRY WinMain(HINSTANCE hInstance,
                      char* lpCmdLine,
                      int nCmdShow)
 {
-    //FILE* file = 0;
-    //fopen_s ( &file, "z:\\development\\call_of_prypiat\\resources\\gamedata\\shaders\\r3\\objects\\r4\\accum_sun_near_msaa_minmax.ps\\2048__1___________4_11141_", "rb" );
-    //u32 const file_size = 29544;
-    //char* buffer = (char*)malloc(file_size);
-    //fread ( buffer, file_size, 1, file );
-    //fclose ( file );
-
-    //u32 const& crc = *(u32*)buffer;
-
-    //boost::crc_32_type processor;
-    //processor.process_block ( buffer + 4, buffer + file_size );
-    //u32 const new_crc = processor.checksum( );
-    //VERIFY ( new_crc == crc );
-
-    //free (buffer);
-
     __try
     {
         WinMain_impl(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
@@ -968,22 +848,14 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 LPCSTR _GetFontTexName(LPCSTR section)
 {
     static char* tex_names[] = {"texture800", "texture", "texture1600"};
-    int def_idx = 1;//default 1024x768
+    int def_idx = 1;		//default 1024x768
     int idx = def_idx;
 
-#if 0
-    u32 w = Device.dwWidth;
-
-    if (w <= 800) idx = 0;
-    else if (w <= 1280)idx = 1;
-    else idx = 2;
-#else
     u32 h = Device.dwHeight;
 
     if (h <= 600) idx = 0;
     else if (h < 1024) idx = 1;
     else idx = 2;
-#endif
 
     while (idx >= 0)
     {
@@ -1010,8 +882,10 @@ void _InitializeFont(CGameFont*& F, LPCSTR section, u32 flags)
     if (pSettings->line_exist(section, "size"))
     {
         float sz = pSettings->r_float(section, "size");
-        if (flags&CGameFont::fsDeviceIndependent) F->SetHeightI(sz);
-        else F->SetHeight(sz);
+        if (flags&CGameFont::fsDeviceIndependent)
+			F->SetHeightI(sz);
+        else 
+			F->SetHeight(sz);
     }
     if (pSettings->line_exist(section, "interval"))
         F->SetInterval(pSettings->r_fvector2(section, "interval"));
@@ -1025,12 +899,12 @@ CApplication::CApplication()
     max_load_stage = 0;
 
     // events
-    eQuit = Engine.Event.Handler_Attach("KERNEL:quit", this);
-    eStart = Engine.Event.Handler_Attach("KERNEL:start", this);
-    eStartLoad = Engine.Event.Handler_Attach("KERNEL:load", this);
-    eDisconnect = Engine.Event.Handler_Attach("KERNEL:disconnect", this);
-    eConsole = Engine.Event.Handler_Attach("KERNEL:console", this);
-    eStartMPDemo = Engine.Event.Handler_Attach("KERNEL:start_mp_demo", this);
+    eQuit			= Engine.Event.Handler_Attach("KERNEL:quit", this);
+    eStart			= Engine.Event.Handler_Attach("KERNEL:start", this);
+    eStartLoad		= Engine.Event.Handler_Attach("KERNEL:load", this);
+    eDisconnect		= Engine.Event.Handler_Attach("KERNEL:disconnect", this);
+    eConsole		= Engine.Event.Handler_Attach("KERNEL:console", this);
+    eStartMPDemo	= Engine.Event.Handler_Attach("KERNEL:start_mp_demo", this);
 
     // levels
     Level_Current = u32(-1);
@@ -1105,11 +979,10 @@ void CApplication::OnEvent(EVENT E, u64 P1, u64 P2)
         if ((op_server == NULL) ||
                 (!xr_strlen(op_server)) ||
                 (
-                    (strstr(op_server, "/dm") || strstr(op_server, "/deathmatch") ||
-                     strstr(op_server, "/tdm") || strstr(op_server, "/teamdeathmatch") ||
-                     strstr(op_server, "/ah") || strstr(op_server, "/artefacthunt") ||
-                     strstr(op_server, "/cta") || strstr(op_server, "/capturetheartefact")
-                    ) &&
+                    (strstr(op_server, "/dm")	|| strstr(op_server, "/deathmatch") ||
+                     strstr(op_server, "/tdm")	|| strstr(op_server, "/teamdeathmatch") ||
+                     strstr(op_server, "/ah")	|| strstr(op_server, "/artefacthunt") ||
+                     strstr(op_server, "/cta")	|| strstr(op_server, "/capturetheartefact")) &&
                     !strstr(op_server, "/alife")
                 )
            )
@@ -1117,12 +990,7 @@ void CApplication::OnEvent(EVENT E, u64 P1, u64 P2)
         {
             Console->Execute("main_menu off");
             Console->Hide();
-            //! this line is commented by Dima
-            //! because I don't see any reason to reset device here
-            //! Device.Reset (false);
-            //-----------------------------------------------------------
             g_pGamePersistent->PreStart(op_server);
-            //-----------------------------------------------------------
             g_pGameLevel = (IGame_Level*)NEW_INSTANCE(CLSID_GAME_LEVEL);
             pApp->LoadBegin();
             g_pGamePersistent->Start(op_server);
@@ -1195,7 +1063,6 @@ void CApplication::LoadBegin()
     ll_dwReference++;
     if (1 == ll_dwReference)
     {
-
         g_appLoaded = FALSE;
         
 #ifndef DEDICATED_SERVER
@@ -1218,19 +1085,14 @@ void CApplication::LoadEnd()
         Msg("* phase cmem: %d K", Memory.mem_usage() / 1024);
         Console->Execute("stat_memory");
         g_appLoaded = TRUE;
-        // DUMP_PHASE;
     }
 }
 
 void CApplication::destroy_loading_shaders()
 {
     m_pRender->destroy_loading_shaders();
-    //hLevelLogo.destroy ();
-    //sh_progress.destroy ();
-    //. ::Sound->mute (false);
 }
 
-//u32 calc_progress_color(u32, u32, int, int);
 
 PROTECT_API void CApplication::LoadDraw()
 {
@@ -1253,7 +1115,6 @@ void CApplication::LoadTitleInt(LPCSTR str1, LPCSTR str2, LPCSTR str3)
     xr_strcpy(ls_header, str1);
     xr_strcpy(ls_tip_number, str2);
     xr_strcpy(ls_tip, str3);
-    // LoadDraw ();
 }
 void CApplication::LoadStage()
 {
@@ -1307,8 +1168,6 @@ void CApplication::Level_Append(LPCSTR folder)
 
 void CApplication::Level_Scan()
 {
-    //SECUROM_MARKER_PERFORMANCE_ON(8)
-
     for (u32 i = 0; i < Levels.size(); i++)
     {
         xr_free(Levels[i].folder);
@@ -1324,8 +1183,6 @@ void CApplication::Level_Scan()
         Level_Append((*folder)[i]);
 
     FS.file_list_close(folder);
-
-    //SECUROM_MARKER_PERFORMANCE_OFF(8)
 }
 
 void gen_logo_name(string_path& dest, LPCSTR level_name, int num)
@@ -1343,7 +1200,6 @@ void gen_logo_name(string_path& dest, LPCSTR level_name, int num)
 
 void CApplication::Level_Set(u32 L)
 {
-    //SECUROM_MARKER_PERFORMANCE_ON(9)
 
     if (L >= Levels.size()) return;
     FS.get_path("$level$")->_set(Levels[L].folder);
@@ -1377,14 +1233,11 @@ void CApplication::Level_Set(u32 L)
     if (path[0])
         m_pRender->setLevelLogo(path);
 
-    //SECUROM_MARKER_PERFORMANCE_OFF(9)
 }
 
 int CApplication::Level_ID(LPCSTR name, LPCSTR ver, bool bSet)
 {
     int result = -1;
-
-    ////SECUROM_MARKER_SECURITY_ON(7)
 
     CLocatorAPI::archives_it it = FS.m_archives.begin();
     CLocatorAPI::archives_it it_e = FS.m_archives.end();
@@ -1425,8 +1278,6 @@ int CApplication::Level_ID(LPCSTR name, LPCSTR ver, bool bSet)
     if (arch_res)
         g_pGamePersistent->OnAssetsChanged();
 
-    ////SECUROM_MARKER_SECURITY_OFF(7)
-
     return result;
 }
 
@@ -1462,15 +1313,17 @@ void CApplication::LoadAllArchives()
 extern "C" {
     typedef int __cdecl LauncherFunc(int);
 }
-HMODULE hLauncher = NULL;
+HMODULE hLauncher		= NULL;
 LauncherFunc* pLauncher = NULL;
 
 void InitLauncher()
 {
+	// Launcher doesn't exist at CoP
     if (hLauncher)
         return;
     hLauncher = LoadLibrary("xrLauncher.dll");
-    if (0 == hLauncher) R_CHK(GetLastError());
+    if (!hLauncher)
+		R_CHK(GetLastError());
     R_ASSERT2(hLauncher, "xrLauncher DLL raised exception during loading or there is no xrLauncher.dll at all");
 
     pLauncher = (LauncherFunc*)GetProcAddress(hLauncher, "RunXRLauncher");
@@ -1489,42 +1342,18 @@ void FreeLauncher()
 
 int doLauncher()
 {
-    /*
-    execUserScript();
-    InitLauncher();
-    int res = pLauncher(0);
-    FreeLauncher();
-    if(res == 1) // do benchmark
-    g_bBenchmark = true;
-
-    if(g_bBenchmark){ //perform benchmark cycle
-    doBenchmark();
-
-    // InitLauncher ();
-    // pLauncher (2); //show results
-    // FreeLauncher ();
-
-    Core._destroy ();
-    return (1);
-
-    };
-    if(res==8){//Quit
-    Core._destroy ();
-    return (1);
-    }
-    */
     return 0;
 }
 
 void doBenchmark(LPCSTR name)
 {
-    g_bBenchmark = true;
-    string_path in_file;
-    FS.update_path(in_file, "$app_data_root$", name);
-    CInifile ini(in_file);
-    int test_count = ini.line_count("benchmark");
-    LPCSTR test_name, t;
-    shared_str test_command;
+    g_bBenchmark					= true;
+    string_path		in_file;
+    FS.update_path					(in_file, "$app_data_root$", name);
+    CInifile		ini(in_file);
+    int				test_count		= ini.line_count("benchmark");
+    LPCSTR			test_name, t;
+    shared_str		test_command;
     for (int i = 0; i < test_count; ++i)
     {
         ini.r_line("benchmark", i, &test_name, &t);
@@ -1539,9 +1368,6 @@ void doBenchmark(LPCSTR name)
         InitInput();
         if (i)
         {
-            //ZeroMemory(&HW,sizeof(CHW));
-            // TODO: KILL HW here!
-            // pApp->m_pRender->KillHW();
             InitEngine();
         }
 
@@ -1563,123 +1389,4 @@ void doBenchmark(LPCSTR name)
 void CApplication::load_draw_internal()
 {
     m_pRender->load_draw_internal(*this);
-    /*
-    if(!sh_progress){
-    CHK_DX (HW.pDevice->Clear(0,0,D3DCLEAR_TARGET,D3DCOLOR_ARGB(0,0,0,0),1,0));
-    return;
-    }
-    // Draw logo
-    u32 Offset;
-    u32 C = 0xffffffff;
-    u32 _w = Device.dwWidth;
-    u32 _h = Device.dwHeight;
-    FVF::TL* pv = NULL;
-
-    //progress
-    float bw = 1024.0f;
-    float bh = 768.0f;
-    Fvector2 k; k.set(float(_w)/bw, float(_h)/bh);
-
-    RCache.set_Shader (sh_progress);
-    CTexture* T = RCache.get_ActiveTexture(0);
-    Fvector2 tsz;
-    tsz.set ((float)T->get_Width(),(float)T->get_Height());
-    Frect back_text_coords;
-    Frect back_coords;
-    Fvector2 back_size;
-
-    //progress background
-    static float offs = -0.5f;
-
-    back_size.set (1024,768);
-    back_text_coords.lt.set (0,0);back_text_coords.rb.add(back_text_coords.lt,back_size);
-    back_coords.lt.set (offs, offs); back_coords.rb.add(back_coords.lt,back_size);
-
-    back_coords.lt.mul (k);back_coords.rb.mul(k);
-
-    back_text_coords.lt.x/=tsz.x; back_text_coords.lt.y/=tsz.y; back_text_coords.rb.x/=tsz.x; back_text_coords.rb.y/=tsz.y;
-    pv = (FVF::TL*) RCache.Vertex.Lock(4,ll_hGeom.stride(),Offset);
-    pv->set (back_coords.lt.x, back_coords.rb.y, C,back_text_coords.lt.x, back_text_coords.rb.y); pv++;
-    pv->set (back_coords.lt.x, back_coords.lt.y, C,back_text_coords.lt.x, back_text_coords.lt.y); pv++;
-    pv->set (back_coords.rb.x, back_coords.rb.y, C,back_text_coords.rb.x, back_text_coords.rb.y); pv++;
-    pv->set (back_coords.rb.x, back_coords.lt.y, C,back_text_coords.rb.x, back_text_coords.lt.y); pv++;
-    RCache.Vertex.Unlock (4,ll_hGeom.stride());
-
-    RCache.set_Geometry (ll_hGeom);
-    RCache.Render (D3DPT_TRIANGLELIST,Offset,0,4,0,2);
-
-    //progress bar
-    back_size.set (268,37);
-    back_text_coords.lt.set (0,768);back_text_coords.rb.add(back_text_coords.lt,back_size);
-    back_coords.lt.set (379 ,726);back_coords.rb.add(back_coords.lt,back_size);
-
-    back_coords.lt.mul (k);back_coords.rb.mul(k);
-
-    back_text_coords.lt.x/=tsz.x; back_text_coords.lt.y/=tsz.y; back_text_coords.rb.x/=tsz.x; back_text_coords.rb.y/=tsz.y;
-
-
-
-    u32 v_cnt = 40;
-    pv = (FVF::TL*)RCache.Vertex.Lock (2*(v_cnt+1),ll_hGeom2.stride(),Offset);
-    FVF::TL* _pv = pv;
-    float pos_delta = back_coords.width()/v_cnt;
-    float tc_delta = back_text_coords.width()/v_cnt;
-    u32 clr = C;
-
-    for(u32 idx=0; idx<v_cnt+1; ++idx){
-    clr = calc_progress_color(idx,v_cnt,load_stage,max_load_stage);
-    pv->set (back_coords.lt.x+pos_delta*idx+offs, back_coords.rb.y+offs, 0+EPS_S, 1, clr, back_text_coords.lt.x+tc_delta*idx, back_text_coords.rb.y); pv++;
-    pv->set (back_coords.lt.x+pos_delta*idx+offs, back_coords.lt.y+offs, 0+EPS_S, 1, clr, back_text_coords.lt.x+tc_delta*idx, back_text_coords.lt.y); pv++;
-    }
-    VERIFY (u32(pv-_pv)==2*(v_cnt+1));
-    RCache.Vertex.Unlock (2*(v_cnt+1),ll_hGeom2.stride());
-
-    RCache.set_Geometry (ll_hGeom2);
-    RCache.Render (D3DPT_TRIANGLESTRIP, Offset, 2*v_cnt);
-
-
-    // Draw title
-    VERIFY (pFontSystem);
-    pFontSystem->Clear ();
-    pFontSystem->SetColor (color_rgba(157,140,120,255));
-    pFontSystem->SetAligment (CGameFont::alCenter);
-    pFontSystem->OutI (0.f,0.815f,app_title);
-    pFontSystem->OnRender ();
-
-
-    //draw level-specific screenshot
-    if(hLevelLogo){
-    Frect r;
-    r.lt.set (257,369);
-    r.lt.x += offs;
-    r.lt.y += offs;
-    r.rb.add (r.lt,Fvector2().set(512,256));
-    r.lt.mul (k);
-    r.rb.mul (k);
-    pv = (FVF::TL*) RCache.Vertex.Lock(4,ll_hGeom.stride(),Offset);
-    pv->set (r.lt.x, r.rb.y, C, 0, 1); pv++;
-    pv->set (r.lt.x, r.lt.y, C, 0, 0); pv++;
-    pv->set (r.rb.x, r.rb.y, C, 1, 1); pv++;
-    pv->set (r.rb.x, r.lt.y, C, 1, 0); pv++;
-    RCache.Vertex.Unlock (4,ll_hGeom.stride());
-
-    RCache.set_Shader (hLevelLogo);
-    RCache.set_Geometry (ll_hGeom);
-    RCache.Render (D3DPT_TRIANGLELIST,Offset,0,4,0,2);
-    }
-    */
 }
-
-/*
-u32 calc_progress_color(u32 idx, u32 total, int stage, int max_stage)
-{
-if(idx>(total/2))
-idx = total-idx;
-
-
-float kk = (float(stage+1)/float(max_stage))*(total/2.0f);
-float f = 1/(exp((float(idx)-kk)*0.5f)+1.0f);
-
-return color_argb_f (f,1.0f,1.0f,1.0f);
-}
-*/

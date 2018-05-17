@@ -599,6 +599,7 @@ void CUIMiniMap::UpdateSpots()
 
 void  CUIMiniMap::Draw()
 {
+#ifdef CIRCLE_MINIMAP
 	u32	segments_count			= 20;
 
 	UIRender->SetShader			(*m_UIStaticItem.GetShader());
@@ -655,10 +656,27 @@ void  CUIMiniMap::Draw()
 	}
 
 	UIRender->FlushPrimitive	();
-
-
 //------------
 	CUIWindow::Draw(); //draw childs
+#else
+	CUIStatic cuis;
+	////////////////////////////////////////////
+	FLOAT fBaseWidth			= Device.dwWidth / UI_BASE_WIDTH;
+	FLOAT fBaseHeight			= Device.dwHeight / UI_BASE_HEIGHT;
+	////////////////////////////////////////////
+	// Reserve
+	FLOAT fDeltaBaseSize		= fBaseWidth / fBaseHeight;
+	////////////////////////////////////////////
+	FLOAT fWightWorkingArea		= WorkingArea().width();
+	WorkingArea().set			(fBaseHeight * 10,
+								 fBaseWidth * 10,
+								 fBaseHeight * 10 + fWightWorkingArea,
+								 fBaseWidth * 10 + fWightWorkingArea);
+	////////////////////////////////////////////
+	UI().PushScissor			(WorkingArea());
+	cuis.Draw();
+	UI().PopScissor				();
+#endif
 }
 
 bool CUIMiniMap::GetPointerTo(const Fvector2& src, float item_radius, Fvector2& pos, float& heading)
