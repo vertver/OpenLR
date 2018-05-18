@@ -410,8 +410,8 @@ void Startup()
     //. destroySound();
     destroyInput();
 
-    if (!g_bBenchmark && !g_SASH.IsRunning())
-        destroySettings();
+	if (!g_bBenchmark && !g_SASH.IsRunning())
+		destroySettings();
 
     LALib.OnDestroy();
 
@@ -421,7 +421,6 @@ void Startup()
         Console->Destroy();
 
     destroySound();
-
     destroyEngine();
 }
 
@@ -599,40 +598,16 @@ BOOL IsOutOfVirtualMemory()
 
 ENGINE_API bool g_dedicated_server = false;
 
-int WINAPI WinMain_impl(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* lpCmdLine, int nCmdShow)
+ENGINE_API int RunApplication(LPSTR lpCmdLine)
 {
-#ifdef DEDICATED_SERVER
-    Debug._initialize(true);
-#else // DEDICATED_SERVER
     Debug._initialize(false);
-#endif // DEDICATED_SERVER
 
-    if (!IsDebuggerPresent())
-    {
+	if (!IsDebuggerPresent())
+	{
+		size_t HeapFragValue = 2;
+		HeapSetInformation(GetProcessHeap(), HeapCompatibilityInformation, &HeapFragValue, sizeof(HeapFragValue));
+	}
 
-        HMODULE const kernel32 = LoadLibrary("kernel32.dll");
-        R_ASSERT(kernel32);
-
-        typedef BOOL(__stdcall*HeapSetInformation_type) (HANDLE, HEAP_INFORMATION_CLASS, PVOID, SIZE_T);
-        HeapSetInformation_type const heap_set_information =
-            (HeapSetInformation_type)GetProcAddress(kernel32, "HeapSetInformation");
-        if (heap_set_information)
-        {
-            ULONG HeapFragValue = 2;
-#ifdef DEBUG
-            BOOL const result =
-#endif // #ifdef DEBUG
-                heap_set_information(GetProcessHeap(),
-									 HeapCompatibilityInformation,
-									 &HeapFragValue,
-									 sizeof(HeapFragValue));
-#ifdef DEBUG
-            VERIFY2(result, "can't set process heap low fragmentation");
-#endif
-        }
-    }
-
-#ifndef DEDICATED_SERVER
 
     // Check for virtual memory
     if ((strstr(lpCmdLine, "--skipmemcheck") == NULL) && IsOutOfVirtualMemory())
@@ -658,12 +633,8 @@ int WINAPI WinMain_impl(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* lpCm
         CloseHandle(hCheckPresenceMutex);
         return 1;
     }
-#endif
-#else // DEDICATED_SERVER
-    g_dedicated_server = true;
-#endif // DEDICATED_SERVER
 
-    SetThreadAffinityMask			(GetCurrentThread(), 1);
+#endif 
 
     // Title window
     logoWindow						= CreateDialog(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_STARTUP), 0, logDlgProc);
@@ -722,92 +693,18 @@ int WINAPI WinMain_impl(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* lpCm
 
         FPU::m24r();
         InitEngine();
-
         InitInput();
-
         InitConsole();
 
-        Engine.External.CreateRendererList();
-
-        LPCSTR benchName = "-batch_benchmark ";
-        if (strstr(lpCmdLine, benchName))
-        {
-            int sz = xr_strlen(benchName);
-            string64 b_name;
-            sscanf(strstr(Core.Params, benchName) + sz, "%[^ ] ", b_name);
-            doBenchmark(b_name);
-            return 0;
-        }
-
-        Msg("command line %s", lpCmdLine);
-        LPCSTR sashName = "-openautomate ";
-        if (strstr(lpCmdLine, sashName))
-        {
-            int sz = xr_strlen(sashName);
-            string512 sash_arg;
-            sscanf(strstr(Core.Params, sashName) + sz, "%[^ ] ", sash_arg);
-            //doBenchmark (sash_arg);
-            g_SASH.Init(sash_arg);
-            g_SASH.MainLoop();
-            return 0;
-        }
-
-        if (strstr(lpCmdLine, "-launcher"))
-        {
-            int l_res = doLauncher();
-            if (l_res != 0)
-                return 0;
-        };
-
-#ifndef DEDICATED_SERVER
-        if (strstr(Core.Params, "-r2a"))
-            Console->Execute("renderer renderer_r2a");
-        else if (strstr(Core.Params, "-r2"))
-            Console->Execute("renderer renderer_r2");
-		else if (strstr(Core.Params, "-r2.5"))
-			Console->Execute("renderer renderer_r2.5");
-		else if (strstr(Core.Params, "-r3"))
-			Console->Execute("renderer renderer_r3");
-		else if (strstr(Core.Params, "-r4"))
-			Console->Execute("renderer renderer_r4");
-        else
-        {
-            CCC_LoadCFG_custom* pTmp = xr_new<CCC_LoadCFG_custom>("renderer ");
-            pTmp->Execute(Console->ConfigFile);
-            xr_delete(pTmp);
-        }
-#else
-        Console->Execute("renderer renderer_r1");
-#endif
 		Engine.External.Initialize();
 
-        Startup();
-        Core._destroy();
-
-        // check for need to execute something external
-        if (xr_strlen(g_sLaunchOnExit_app))
-        {
-            //CreateProcess need to return results to next two structures
-            STARTUPINFO si;
-            PROCESS_INFORMATION pi;
-            ZeroMemory(&si, sizeof(si));
-            si.cb = sizeof(si);
-            ZeroMemory(&pi, sizeof(pi));
-            //We use CreateProcess to setup working folder
-            char const* temp_wf = (xr_strlen(g_sLaunchWorkingFolder) > 0) ? g_sLaunchWorkingFolder : NULL;
-            CreateProcess(g_sLaunchOnExit_app, g_sLaunchOnExit_params, NULL, NULL, FALSE, 0, NULL,
-                          temp_wf, &si, &pi);
-
-        }
-#ifndef DEDICATED_SERVER
-#ifdef NO_MULTI_INSTANCES
-        // Delete application presence mutex
-        CloseHandle(hCheckPresenceMutex);
+		Startup();
+		Core._destroy();
+#ifdef NO_MULTI_INSTANCES		
+		// Delete application presence mutex
+		CloseHandle(hCheckPresenceMutex);
 #endif
     }
-    // here damn_keys_filter class instanse will be destroyed
-#endif // DEDICATED_SERVER
-
     return 0;
 }
 
@@ -826,24 +723,6 @@ int stack_overflow_exception_filter(int exception_code)
 }
 
 #include <boost/crc.hpp>
-
-int APIENTRY WinMain(HINSTANCE hInstance,
-                     HINSTANCE hPrevInstance,
-                     char* lpCmdLine,
-                     int nCmdShow)
-{
-    __try
-    {
-        WinMain_impl(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
-    }
-    __except (stack_overflow_exception_filter(GetExceptionCode()))
-    {
-        _resetstkoflw();
-        FATAL("stack overflow");
-    }
-
-    return (0);
-}
 
 LPCSTR _GetFontTexName(LPCSTR section)
 {
@@ -1082,7 +961,7 @@ void CApplication::LoadEnd()
     if (0 == ll_dwReference)
     {
         Msg("* phase time: %d ms", phase_timer.GetElapsed_ms());
-        Msg("* phase cmem: %d K", Memory.mem_usage() / 1024);
+        Msg("* phase cmem: %d MByte", Memory.mem_usage());
         Console->Execute("stat_memory");
         g_appLoaded = TRUE;
     }
@@ -1100,7 +979,8 @@ PROTECT_API void CApplication::LoadDraw()
     Device.dwFrame += 1;
 
 
-    if (!Device.Begin()) return;
+    if (!Device.Begin()) 
+		return;
 
     if (g_dedicated_server)
         Console->OnRender();
@@ -1283,21 +1163,18 @@ int CApplication::Level_ID(LPCSTR name, LPCSTR ver, bool bSet)
 
 CInifile* CApplication::GetArchiveHeader(LPCSTR name, LPCSTR ver)
 {
-    CLocatorAPI::archives_it it = FS.m_archives.begin();
-    CLocatorAPI::archives_it it_e = FS.m_archives.end();
+	for (auto it = FS.m_archives.begin(); it != FS.m_archives.end(); ++it)
+	{
+		CLocatorAPI::archive& A = *it;
 
-    for (; it != it_e; ++it)
-    {
-        CLocatorAPI::archive& A = *it;
-
-        LPCSTR ln = A.header->r_string("header", "level_name");
-        LPCSTR lv = A.header->r_string("header", "level_ver");
-        if (0 == stricmp(ln, name) && 0 == stricmp(lv, ver))
-        {
-            return A.header;
-        }
-    }
-    return NULL;
+		LPCSTR ln = A.header->r_string("header", "level_name");
+		LPCSTR lv = A.header->r_string("header", "level_ver");
+		if (!_stricmp(ln, name) && 0 == _stricmp(lv, ver))
+		{
+			return A.header;
+		}
+	}
+	return nullptr;
 }
 
 void CApplication::LoadAllArchives()
@@ -1309,82 +1186,48 @@ void CApplication::LoadAllArchives()
     }
 }
 
-//launcher stuff----------------------------
-extern "C" {
-    typedef int __cdecl LauncherFunc(int);
-}
-HMODULE hLauncher		= NULL;
-LauncherFunc* pLauncher = NULL;
 
-void InitLauncher()
+/*oid doBenchmark(LPCSTR name)
 {
-	// Launcher doesn't exist at CoP
-    if (hLauncher)
-        return;
-    hLauncher = LoadLibrary("xrLauncher.dll");
-    if (!hLauncher)
-		R_CHK(GetLastError());
-    R_ASSERT2(hLauncher, "xrLauncher DLL raised exception during loading or there is no xrLauncher.dll at all");
+	g_bBenchmark					= true;
+	string_path		in_file;
+	FS.update_path					(in_file, "$app_data_root$", name);
+	CInifile		ini(in_file);
+	int				test_count		= ini.line_count("benchmark");
+	LPCSTR			test_name, t;
+	shared_str		test_command;
+	for (int i = 0; i < test_count; ++i)
+	{
+		ini.r_line("benchmark", i, &test_name, &t);
+		xr_strcpy(g_sBenchmarkName, test_name);
 
-    pLauncher = (LauncherFunc*)GetProcAddress(hLauncher, "RunXRLauncher");
-    R_ASSERT2(pLauncher, "Cannot obtain RunXRLauncher function from xrLauncher.dll");
-};
+		test_command = ini.r_string_wb("benchmark", test_name);
+		u32 cmdSize = test_command.size() + 1;
+		Core.Params = (char*)xr_realloc(Core.Params, cmdSize);
+		xr_strcpy(Core.Params, cmdSize, test_command.c_str());
+		xr_strlwr(Core.Params);
 
-void FreeLauncher()
-{
-    if (hLauncher)
-    {
-        FreeLibrary(hLauncher);
-        hLauncher = NULL;
-        pLauncher = NULL;
-    };
-}
-
-int doLauncher()
-{
-    return 0;
-}
-
-void doBenchmark(LPCSTR name)
-{
-    g_bBenchmark					= true;
-    string_path		in_file;
-    FS.update_path					(in_file, "$app_data_root$", name);
-    CInifile		ini(in_file);
-    int				test_count		= ini.line_count("benchmark");
-    LPCSTR			test_name, t;
-    shared_str		test_command;
-    for (int i = 0; i < test_count; ++i)
-    {
-        ini.r_line("benchmark", i, &test_name, &t);
-        xr_strcpy(g_sBenchmarkName, test_name);
-
-        test_command = ini.r_string_wb("benchmark", test_name);
-        u32 cmdSize = test_command.size() + 1;
-        Core.Params = (char*)xr_realloc(Core.Params, cmdSize);
-        xr_strcpy(Core.Params, cmdSize, test_command.c_str());
-        xr_strlwr(Core.Params);
-
-        InitInput();
-        if (i)
-        {
-            InitEngine();
-        }
+		InitInput();
+		if (i)
+		{
+			InitEngine();
+		}
 
 
-        Engine.External.Initialize();
+		Engine.External.Initialize();
 
-        xr_strcpy(Console->ConfigFile, "user.ltx");
-        if (strstr(Core.Params, "-ltx "))
-        {
-            string64 c_name;
-            sscanf(strstr(Core.Params, "-ltx ") + 5, "%[^ ] ", c_name);
-            xr_strcpy(Console->ConfigFile, c_name);
-        }
+		xr_strcpy(Console->ConfigFile, "user.ltx");
+		if (strstr(Core.Params, "-ltx "))
+		{
+			string64 c_name;
+			sscanf(strstr(Core.Params, "-ltx ") + 5, "%[^ ] ", c_name);
+			xr_strcpy(Console->ConfigFile, c_name);
+		}
 
-        Startup();
-    }
-}
+		Startup();
+	}
+	*/
+
 #pragma optimize("g", off)
 void CApplication::load_draw_internal()
 {

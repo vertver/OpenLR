@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2027
+VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "utils", "utils", "{89F6A7EE-3BBE-45D3-A8A8-5D9366CD987B}"
 EndProject
@@ -143,7 +143,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "oalib", "..\sdk\include\Ope
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libjpeg", "..\sdk\include\jpeg\vs2013\libjpeg.vcxproj", "{938C5808-85A1-4B5A-8CB4-D2D9D7851CB8}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Stalker-CoC", "Launcher\Stalker-CoC.vcxproj", "{1908E312-8385-463D-9B1C-5F86293817BB}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LR-COC", "Launcher\Stalker-CoC.vcxproj", "{1908E312-8385-463D-9B1C-5F86293817BB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2578C6D8-660D-48AE-9322-7422F8664F06} = {2578C6D8-660D-48AE-9322-7422F8664F06}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DXERR", "3rd party\DXERR\DXERR.vcxproj", "{772FE450-F4F3-4687-A2A7-5624825089D7}"
 EndProject

@@ -110,6 +110,7 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>I:\oxyl\COC_vs17\_build\lib\Release\xrEngine.lib;I:\oxyl\COC_vs17\_build\lib\Release\luabind.lib;I:\oxyl\COC_vs17\_build\lib\Release\libogg_static.lib;I:\oxyl\COC_vs17\_build\lib\Release\libtheora_static.lib;I:\oxyl\COC_vs17\_build\lib\Release\oalib.lib;I:\oxyl\COC_vs17\_build\lib\Release\xrCore.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
