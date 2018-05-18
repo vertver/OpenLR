@@ -39,29 +39,22 @@ void FlushLog()
     }
 }
 
+IWriter *LogWriter;
+size_t cached_log = 0;
+
 void AddOne(const char* split)
 {
     if (!LogFile)
         return;
 
-    logCS.Enter();
+	OutputDebugString(split);
+	OutputDebugString("\n");
 
-#ifdef DEBUG
-    OutputDebugString(split);
-    OutputDebugString("\n");
-#endif
+	char buf[64];
+	shared_str temp = shared_str(split);
+	LogFile->push_back(temp);
 
-    // DUMP_PHASE;
-    {
-        shared_str temp = shared_str(split);
-        // DUMP_PHASE;
-        LogFile->push_back(temp);
-    }
-
-    //exec CallBack
-    if (LogExecCB&&LogCB)LogCB(split);
-
-    logCS.Leave();
+	FlushLog();
 }
 
 void Log(const char* s)
@@ -94,13 +87,12 @@ void Log(const char* s)
 
 void __cdecl Msg(const char* format, ...)
 {
-    va_list mark;
-    string2048 buf;
-    va_start(mark, format);
-    int sz = _vsnprintf(buf, sizeof(buf) - 1, format, mark);
-    buf[sizeof(buf) - 1] = 0;
-    va_end(mark);
-    if (sz) Log(buf);
+	va_list		mark;
+	string2048	buf;
+	va_start(mark, format);
+	int sz = _vsnprintf(buf, sizeof(buf) - 1, format, mark); buf[sizeof(buf) - 1] = 0;
+	va_end(mark);
+	if (sz)		Log(buf);
 }
 
 void Log(const char* msg, const char* dop)

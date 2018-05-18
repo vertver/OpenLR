@@ -175,7 +175,6 @@ void CEngineAPI::Initialize(void)
     LPCSTR r1_name = "xrRender_R1.dll";
 
 	InitializeRenderer();
-
 	if (0 == hRender && vid_quality_token[0].id != -1)
 	{
 		// if engine failed to load renderer

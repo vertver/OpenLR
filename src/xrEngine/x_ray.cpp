@@ -696,6 +696,7 @@ ENGINE_API int RunApplication(LPSTR lpCmdLine)
         InitInput();
         InitConsole();
 
+		Engine.External.CreateRendererList();
 		Engine.External.Initialize();
 
 		Startup();
