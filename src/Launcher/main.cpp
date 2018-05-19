@@ -11,7 +11,7 @@ DLL_API int RunApplication(LPSTR lpCmdLine);
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	if (hPrevInstance)
+	if (hPrevInstance)			// welcome to win3.1, baby
 		return 0;
 
 	try
@@ -25,9 +25,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		__debugbreak();
 #else
 		MessageBoxA(NULL, "Can't load xrCore. Please, restart the game.", "Error", MB_OK | MB_ICONHAND);
-#endif
+#endif 
 	}
 	RunApplication(lpCmdLine);
-	MessageBox(NULL, "", "", MB_OK | MB_ICONHAND);
 	return 0;
 }
