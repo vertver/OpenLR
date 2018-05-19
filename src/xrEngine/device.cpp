@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "../xrCDB/frustum.h"
 
+
+#include "xr_input.h"
 #pragma warning(disable:4995)
 // mmsystem.h
 #define MMNOSOUND
@@ -401,6 +403,97 @@ void CRenderDevice::Run()
     // DeleteCriticalSection (&mt_csLeave);
 }
 
+/////////////////////////////////////////////////
+//#VERTVER: this feature was maded by Giperion 
+//OxyDev 2018 (C)
+//https://github.com/xrOxygen/xray-oxygen
+/////////////////////////////////////////////////
+void CRenderDevice::UpdateWindowPropStyle(WindowPropStyle PropStyle)
+{
+	DWORD dwWindowStyle = 0;
+	DWORD dwWidth = psCurrentVidMode[0];
+	DWORD dwHeight = psCurrentVidMode[1];
+	bool bFullscreen = psDeviceFlags.is(rsFullscreen);
+
+	RECT			m_rcWindowBounds;
+	float fYOffset = 0.f;
+	bool bCenter = TRUE;
+	RECT				DesktopRect;
+	GetClientRect(GetDesktopWindow(), &DesktopRect);
+
+	switch (PropStyle)
+	{
+	case WPS_Windowed:
+	{
+		fYOffset = GetSystemMetrics(SM_CYCAPTION);
+		psDeviceFlags.set(rsFullscreen, false);
+		dwWindowStyle = WS_VISIBLE | WS_BORDER | WS_DLGFRAME | WS_SYSMENU | WS_MINIMIZEBOX;
+
+		SetRect(&m_rcWindowBounds, (DesktopRect.right - dwWidth) / 2,
+			(DesktopRect.bottom - dwHeight) / 2, (DesktopRect.right + dwWidth) / 2,
+			(DesktopRect.bottom + dwHeight) / 2);
+	}
+	break;
+	case WPS_WindowedBorderless:
+	{
+		psDeviceFlags.set(rsFullscreen, false);
+		dwWindowStyle = WS_VISIBLE;
+
+		SetRect(&m_rcWindowBounds, (DesktopRect.right - dwWidth) / 2,
+			(DesktopRect.bottom - dwHeight) / 2, (DesktopRect.right + dwWidth) / 2,
+			(DesktopRect.bottom + dwHeight) / 2);
+	}
+	break;
+	case WPS_FullscreenBorderless:
+	{
+		psDeviceFlags.set(rsFullscreen, false);
+
+		dwWindowStyle = WS_VISIBLE;
+
+
+		m_rcWindowBounds = DesktopRect;
+	}
+	break;
+	case WPS_Fullscreen:
+	{
+		//special case
+		psDeviceFlags.set(rsFullscreen, true);
+		dwWindowStyle = WS_POPUP | WS_VISIBLE;
+	}
+	break;
+	default:
+		break;
+	}
+
+	SetWindowLong(m_hWnd, GWL_STYLE, dwWindowStyle);
+	bool bNewFullscreen = psDeviceFlags.is(rsFullscreen);
+
+	if (!bNewFullscreen)
+	{
+		AdjustWindowRect(&m_rcWindowBounds, dwWindowStyle, FALSE);
+
+		SetWindowPos(m_hWnd,
+			HWND_NOTOPMOST,
+			m_rcWindowBounds.left,
+			m_rcWindowBounds.top,
+			(m_rcWindowBounds.right - m_rcWindowBounds.left),
+			(m_rcWindowBounds.bottom - m_rcWindowBounds.top),
+			SWP_SHOWWINDOW | SWP_NOCOPYBITS | SWP_DRAWFRAME);
+	}
+
+	if (bFullscreen != bNewFullscreen)
+	{
+		Reset();
+	}
+	else
+	{
+		ShowCursor(FALSE);
+		SetForegroundWindow(m_hWnd);
+	}
+}
+
+
+
 u32 app_inactive_time = 0;
 u32 app_inactive_time_start = 0;
 
@@ -528,32 +621,35 @@ BOOL CRenderDevice::Paused()
 void CRenderDevice::OnWM_Activate(WPARAM wParam, LPARAM lParam)
 {
     u16 fActive = LOWORD(wParam);
-    BOOL fMinimized = (BOOL)HIWORD(wParam);
-    BOOL bActive = ((fActive != WA_INACTIVE) && (!fMinimized)) ? TRUE : FALSE;
+	extern int ps_always_active;
+	const BOOL fMinimized = (BOOL)HIWORD(wParam);
+	const BOOL isWndActive = (fActive != WA_INACTIVE && !fMinimized) ? TRUE : FALSE;
+	const BOOL isGameActive = ps_always_active || isWndActive;
+	if (isWndActive)
+	{
+		ShowCursor(FALSE);
+	}
+	else
+	{
+		ShowCursor(TRUE);	
+	}
+	
+	if (isGameActive != Device.b_is_Active)
+	{
+		Device.b_is_Active = isGameActive;
 
-    if (bActive != Device.b_is_Active)
-    {
-        Device.b_is_Active = bActive;
+		if (Device.b_is_Active)
+		{
+			Device.seqAppActivate.Process(rp_AppActivate);
+			app_inactive_time += TimerMM.GetElapsed_ms() - app_inactive_time_start;
 
-        if (Device.b_is_Active)
-        {
-            Device.seqAppActivate.Process(rp_AppActivate);
-            app_inactive_time += TimerMM.GetElapsed_ms() - app_inactive_time_start;
-
-#ifndef DEDICATED_SERVER
-# ifdef INGAME_EDITOR
-            if (!editor())
-# endif // #ifdef INGAME_EDITOR
-                ShowCursor(FALSE);
-#endif // #ifndef DEDICATED_SERVER
-        }
-        else
-        {
-            app_inactive_time_start = TimerMM.GetElapsed_ms();
-            Device.seqAppDeactivate.Process(rp_AppDeactivate);
-            ShowCursor(TRUE);
-        }
-    }
+		}
+		else
+		{
+			app_inactive_time_start = TimerMM.GetElapsed_ms();
+			Device.seqAppDeactivate.Process(rp_AppDeactivate);
+		}
+	}
 }
 
 void CRenderDevice::AddSeqFrame(pureFrame* f, bool mt)

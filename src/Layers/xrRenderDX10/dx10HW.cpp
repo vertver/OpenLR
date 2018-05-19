@@ -59,26 +59,6 @@ CHW::~CHW()
 //////////////////////////////////////////////////////////////////////
 void CHW::CreateD3D()
 {
-	/*	Partially implemented dynamic load
-	LPCSTR		_name			= "d3d10.dll";
-
-	hD3D            			= LoadLibrary(_name);
-
-	//	If library can't be loaded computer don't support DirectX 10 at all
-	if (!hD3D)					return;
-	//	check if adapter support Direc3D 10 interface
-
-	typedef HRESULT _CreateDXGIFactory( REFIID riid,	void **ppFactory);
-
-	_CreateDXGIFactory  *CreateFactory = (_CreateDXGIFactory*)GetProcAddress(hD3D,"CreateDXGIFactory");
-	R_ASSERT(CreateFactory);
-
-	IDXGIFactory * pFactory;
-	R_CHK( CreateFactory(__uuidof(IDXGIFactory), (void**)(&pFactory)) );
-	pFactory->EnumAdapters(0, &m_pAdapter);
-	pFactory->Release();
-	*/
-
 	IDXGIFactory * pFactory;
 	R_CHK( CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)(&pFactory)) );
 
@@ -111,14 +91,6 @@ void CHW::CreateD3D()
 		pFactory->EnumAdapters(0, &m_pAdapter);
 
 	pFactory->Release();
-
-	/*
-	R_ASSERT2	           	 	(hD3D,"Can't find 'd3d10.dll'\nPlease install latest version of DirectX before running this program");
-	typedef IDirect3D9 * WINAPI _Direct3DCreate9(UINT SDKVersion);
-	_Direct3DCreate9* createD3D	= (_Direct3DCreate9*)GetProcAddress(hD3D,"Direct3DCreate9");	R_ASSERT(createD3D);
-	this->pD3D 					= createD3D( D3D_SDK_VERSION );
-	R_ASSERT2					(this->pD3D,"Please install DirectX 9.0c");
-	*/
 }
 
 void CHW::DestroyD3D()
@@ -136,26 +108,6 @@ void CHW::CreateDevice( HWND m_hWnd, bool move_window )
 	m_move_window			= move_window;
 	CreateD3D();
 
-	/* Partially implemented dynamic load
-	typedef HRESULT _D3DxxCreateDeviceAndSwapChain(
-		IDXGIAdapter *pAdapter,
-		D3Dxx_DRIVER_TYPE DriverType,
-		HMODULE Software,
-		UINT Flags,
-		UINT SDKVersion,
-		DXGI_SWAP_CHAIN_DESC *pSwapChainDesc,
-		IDXGISwapChain **ppSwapChain,
-		ID3DxxDevice **ppDevice
-		);
-
-
-
-	_D3DxxCreateDeviceAndSwapChain *CreateDeviceAndSwapChain = 
-		(_D3DxxCreateDeviceAndSwapChain*)
-		GetProcAddress(hD3D,"D3DxxCreateDeviceAndSwapChain");
-	R_ASSERT(CreateDeviceAndSwapChain);
-	*/
-
 	// TODO: DX10: Create appropriate initialization
 
 	// General - select adapter and device
@@ -167,56 +119,15 @@ void CHW::CreateDevice( HWND m_hWnd, bool move_window )
 	if (m_bUsePerfhud)
 		m_DriverType = D3D_DRIVER_TYPE_REFERENCE;
 
-	//	For DirectX 10 adapter is already created in create D3D.
-	/*
-	//. #ifdef DEBUG
-	// Look for 'NVIDIA NVPerfHUD' adapter
-	// If it is present, override default settings
-	for (UINT Adapter=0;Adapter<pD3D->GetAdapterCount();Adapter++)	{
-		D3DADAPTER_IDENTIFIER9 Identifier;
-		HRESULT Res=pD3D->GetAdapterIdentifier(Adapter,0,&Identifier);
-		if (SUCCEEDED(Res) && (xr_strcmp(Identifier.Description,"NVIDIA PerfHUD")==0))
-		{
-			DevAdapter	=Adapter;
-			DevT		=D3DDEVTYPE_REF;
-			break;
-		}
-	}
-	//. #endif
-	*/
-
 	// Display the name of video board
 	DXGI_ADAPTER_DESC Desc;
 	R_CHK( m_pAdapter->GetDesc(&Desc) );
 	//	Warning: Desc.Description is wide string
 	Msg		("* GPU [vendor:%X]-[device:%X]: %S", Desc.VendorId, Desc.DeviceId, Desc.Description);
-	/*
-	// Display the name of video board
-	D3DADAPTER_IDENTIFIER9	adapterID;
-	R_CHK	(pD3D->GetAdapterIdentifier(DevAdapter,0,&adapterID));
-	Msg		("* GPU [vendor:%X]-[device:%X]: %s",adapterID.VendorId,adapterID.DeviceId,adapterID.Description);
-
-	u16	drv_Product		= HIWORD(adapterID.DriverVersion.HighPart);
-	u16	drv_Version		= LOWORD(adapterID.DriverVersion.HighPart);
-	u16	drv_SubVersion	= HIWORD(adapterID.DriverVersion.LowPart);
-	u16	drv_Build		= LOWORD(adapterID.DriverVersion.LowPart);
-	Msg		("* GPU driver: %d.%d.%d.%d",u32(drv_Product),u32(drv_Version),u32(drv_SubVersion), u32(drv_Build));
-	*/
-
-	/*
-	Caps.id_vendor	= adapterID.VendorId;
-	Caps.id_device	= adapterID.DeviceId;
-	*/
 
 	Caps.id_vendor	= Desc.VendorId;
 	Caps.id_device	= Desc.DeviceId;
 
-	/*
-	// Retreive windowed mode
-	D3DDISPLAYMODE mWindowed;
-	R_CHK(pD3D->GetAdapterDisplayMode(DevAdapter, &mWindowed));
-
-	*/
 	// Select back-buffer & depth-stencil format
 	D3DFORMAT&	fTarget	= Caps.fTarget;
 	D3DFORMAT&	fDepth	= Caps.fDepth;
@@ -224,52 +135,7 @@ void CHW::CreateDevice( HWND m_hWnd, bool move_window )
 	//	HACK: DX10: Embed hard target format.
 	fTarget = D3DFMT_X8R8G8B8;	//	No match in DX10. D3DFMT_A8B8G8R8->DXGI_FORMAT_R8G8B8A8_UNORM
 	fDepth = selectDepthStencil(fTarget);
-	/*
-	if (bWindowed)
-	{
-		fTarget = mWindowed.Format;
-		R_CHK(pD3D->CheckDeviceType	(DevAdapter,DevT,fTarget,fTarget,TRUE));
-		fDepth  = selectDepthStencil(fTarget);
-	} else {
-		switch (psCurrentBPP) {
-		case 32:
-			fTarget = D3DFMT_X8R8G8B8;
-			if (SUCCEEDED(pD3D->CheckDeviceType(DevAdapter,DevT,fTarget,fTarget,FALSE)))
-				break;
-			fTarget = D3DFMT_A8R8G8B8;
-			if (SUCCEEDED(pD3D->CheckDeviceType(DevAdapter,DevT,fTarget,fTarget,FALSE)))
-				break;
-			fTarget = D3DFMT_R8G8B8;
-			if (SUCCEEDED(pD3D->CheckDeviceType(DevAdapter,DevT,fTarget,fTarget,FALSE)))
-				break;
-			fTarget = D3DFMT_UNKNOWN;
-			break;
-		case 16:
-		default:
-			fTarget = D3DFMT_R5G6B5;
-			if (SUCCEEDED(pD3D->CheckDeviceType(DevAdapter,DevT,fTarget,fTarget,FALSE)))
-				break;
-			fTarget = D3DFMT_X1R5G5B5;
-			if (SUCCEEDED(pD3D->CheckDeviceType(DevAdapter,DevT,fTarget,fTarget,FALSE)))
-				break;
-			fTarget = D3DFMT_X4R4G4B4;
-			if (SUCCEEDED(pD3D->CheckDeviceType(DevAdapter,DevT,fTarget,fTarget,FALSE)))
-				break;
-			fTarget = D3DFMT_UNKNOWN;
-			break;
-		}
-		fDepth  = selectDepthStencil(fTarget);
-	}
 	
-
-	if ((D3DFMT_UNKNOWN==fTarget) || (D3DFMT_UNKNOWN==fTarget))	{
-		Msg					("Failed to initialize graphics hardware.\nPlease try to restart the game.");
-		FlushLog			();
-		MessageBox			(NULL,"Failed to initialize graphics hardware.\nPlease try to restart the game.","Error!",MB_OK|MB_ICONERROR);
-		TerminateProcess	(GetCurrentProcess(),0);
-	}
-
-	*/
 	
 	// Set up the presentation parameters
 	DXGI_SWAP_CHAIN_DESC	&sd	= m_ChainDesc;
@@ -423,7 +289,6 @@ void CHW::CreateDevice( HWND m_hWnd, bool move_window )
 	Msg		("*     Texture memory: %d M",		memory/(1024*1024));
 	//Msg		("*          DDI-level: %2.1f",		float(D3DXGetDriverLevel(pDevice))/100.f);
 #ifndef _EDITOR
-	updateWindowProps							(m_hWnd);
 	fill_vid_mode_list							(this);
 #endif
 }
@@ -540,7 +405,6 @@ void CHW::Reset (HWND hwnd)
 //	R_CHK				(pDevice->CreateStateBlock			(D3DSBT_ALL,&dwDebugSB));
 //#endif
 
-	updateWindowProps	(hwnd);
 
 
 		/*
@@ -735,58 +599,6 @@ BOOL CHW::support( D3DFORMAT fmt, DWORD type, DWORD usage)
 	return TRUE;
 }
 
-void CHW::updateWindowProps(HWND m_hWnd)
-{
-	//	BOOL	bWindowed				= strstr(Core.Params,"-dedicated") ? TRUE : !psDeviceFlags.is	(rsFullscreen);
-	BOOL	bWindowed				= !psDeviceFlags.is	(rsFullscreen);
-
-	u32		dwWindowStyle			= 0;
-	// Set window properties depending on what mode were in.
-	if (bWindowed)		{
-		if (m_move_window) {
-            dwWindowStyle = WS_BORDER | WS_VISIBLE;
-            if (!strstr(Core.Params, "-no_dialog_header"))
-                dwWindowStyle |= WS_DLGFRAME | WS_SYSMENU | WS_MINIMIZEBOX;
-            SetWindowLong(m_hWnd, GWL_STYLE, dwWindowStyle);
-			// When moving from fullscreen to windowed mode, it is important to
-			// adjust the window size after recreating the device rather than
-			// beforehand to ensure that you get the window size you want.  For
-			// example, when switching from 640x480 fullscreen to windowed with
-			// a 1000x600 window on a 1024x768 desktop, it is impossible to set
-			// the window size to 1000x600 until after the display mode has
-			// changed to 1024x768, because windows cannot be larger than the
-			// desktop.
-
-			RECT			m_rcWindowBounds;
-			RECT				DesktopRect;
-
-			GetClientRect		(GetDesktopWindow(), &DesktopRect);
-
-			SetRect(			&m_rcWindowBounds, 
-				(DesktopRect.right-m_ChainDesc.BufferDesc.Width)/2, 
-				(DesktopRect.bottom-m_ChainDesc.BufferDesc.Height)/2, 
-				(DesktopRect.right+m_ChainDesc.BufferDesc.Width)/2, 
-				(DesktopRect.bottom+m_ChainDesc.BufferDesc.Height)/2);
-
-			AdjustWindowRect		(	&m_rcWindowBounds, dwWindowStyle, FALSE );
-
-			SetWindowPos			(	m_hWnd, 
-				HWND_NOTOPMOST,	
-                m_rcWindowBounds.left,
-                m_rcWindowBounds.top,
-				( m_rcWindowBounds.right - m_rcWindowBounds.left ),
-				( m_rcWindowBounds.bottom - m_rcWindowBounds.top ),
-				SWP_SHOWWINDOW|SWP_NOCOPYBITS|SWP_DRAWFRAME );
-		}
-	}
-	else
-	{
-		SetWindowLong			( m_hWnd, GWL_STYLE, dwWindowStyle=(WS_POPUP|WS_VISIBLE) );
-	}
-
-	ShowCursor	(FALSE);
-	SetForegroundWindow( m_hWnd );
-}
 
 
 struct _uniq_mode

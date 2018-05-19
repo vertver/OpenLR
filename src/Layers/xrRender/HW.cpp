@@ -99,7 +99,7 @@ void CHW::Reset		(HWND hwnd)
     R_CHK				(pDevice->CreateStateBlock			(D3DSBT_ALL,&dwDebugSB));
 #endif
 #ifndef _EDITOR
-    updateWindowProps	(hwnd);
+    //updateWindowProps	(hwnd);
 #endif
 }
 
@@ -433,7 +433,7 @@ void		CHW::CreateDevice		(HWND m_hWnd, bool move_window)
     Msg		("*     Texture memory: %d M",		memory/(1024*1024));
     Msg		("*          DDI-level: %2.1f",		float(D3DXGetDriverLevel(pDevice))/100.f);
 #ifndef _EDITOR
-    updateWindowProps							(m_hWnd);
+    //updateWindowProps							(m_hWnd);
     fill_vid_mode_list							(this);
 #endif
 }
@@ -547,74 +547,7 @@ BOOL	CHW::support	(D3DFORMAT fmt, DWORD type, DWORD usage)
     else			return TRUE;
 }
 
-void	CHW::updateWindowProps	(HWND m_hWnd)
-{
-//	BOOL	bWindowed				= strstr(Core.Params,"-dedicated") ? TRUE : !psDeviceFlags.is	(rsFullscreen);
-//#ifndef DEDICATED_SERVER
-//	BOOL	bWindowed				= !psDeviceFlags.is	(rsFullscreen);
-//#else
-//	BOOL	bWindowed				= TRUE;
-//#endif
 
-    BOOL	bWindowed				= TRUE;
-#ifndef _EDITOR
-    if (!g_dedicated_server)
-        bWindowed			= !psDeviceFlags.is(rsFullscreen);
-#endif	
-
-    u32		dwWindowStyle			= 0;
-    // Set window properties depending on what mode were in.
-    if (bWindowed)		{
-        if (m_move_window) {
-            dwWindowStyle = WS_BORDER | WS_VISIBLE;
-            if (!strstr(Core.Params, "-no_dialog_header"))
-                dwWindowStyle |= WS_DLGFRAME | WS_SYSMENU | WS_MINIMIZEBOX;
-            SetWindowLong(m_hWnd, GWL_STYLE, dwWindowStyle);
-            // When moving from fullscreen to windowed mode, it is important to
-            // adjust the window size after recreating the device rather than
-            // beforehand to ensure that you get the window size you want.  For
-            // example, when switching from 640x480 fullscreen to windowed with
-            // a 1000x600 window on a 1024x768 desktop, it is impossible to set
-            // the window size to 1000x600 until after the display mode has
-            // changed to 1024x768, because windows cannot be larger than the
-            // desktop.
-
-            RECT			m_rcWindowBounds;
-            RECT				DesktopRect;
-                
-            GetClientRect		(GetDesktopWindow(), &DesktopRect);
-
-            SetRect(			&m_rcWindowBounds, 
-                                (DesktopRect.right-DevPP.BackBufferWidth)/2, 
-                                (DesktopRect.bottom-DevPP.BackBufferHeight)/2, 
-                                (DesktopRect.right+DevPP.BackBufferWidth)/2, 
-                                (DesktopRect.bottom+DevPP.BackBufferHeight)/2			);
-
-            AdjustWindowRect		(	&m_rcWindowBounds, dwWindowStyle, FALSE );
-
-            SetWindowPos			(	m_hWnd, 
-                                        HWND_NOTOPMOST,	
-                                        m_rcWindowBounds.left,
-                                        m_rcWindowBounds.top,
-                                        ( m_rcWindowBounds.right - m_rcWindowBounds.left ),
-                                        ( m_rcWindowBounds.bottom - m_rcWindowBounds.top ),
-                                        SWP_SHOWWINDOW|SWP_NOCOPYBITS|SWP_DRAWFRAME );
-        }
-    }
-    else
-    {
-        SetWindowLong			( m_hWnd, GWL_STYLE, dwWindowStyle=(WS_POPUP|WS_VISIBLE) );
-        SetWindowLong			( m_hWnd, GWL_EXSTYLE, WS_EX_TOPMOST);
-    }
-
-#ifndef _EDITOR
-    if (!g_dedicated_server)
-    {
-        ShowCursor	(FALSE);
-        SetForegroundWindow( m_hWnd );
-    }
-#endif
-}
 
 
 struct _uniq_mode
@@ -626,79 +559,6 @@ struct _uniq_mode
 
 #ifndef _EDITOR
 
-/*
-void free_render_mode_list()
-{
-    for( int i=0; vid_quality_token[i].name; i++ )
-    {
-        xr_free					(vid_quality_token[i].name);
-    }
-    xr_free						(vid_quality_token);
-    vid_quality_token			= NULL;
-}
-*/
-/*
-void	fill_render_mode_list()
-{
-    if(vid_quality_token != NULL)		return;
-
-    D3DCAPS9					caps;
-    CHW							_HW;
-    _HW.CreateD3D				();
-    _HW.pD3D->GetDeviceCaps		(D3DADAPTER_DEFAULT,D3DDEVTYPE_HAL,&caps);
-    _HW.DestroyD3D				();
-    u16		ps_ver_major		= u16 ( u32(u32(caps.PixelShaderVersion)&u32(0xf << 8ul))>>8 );
-
-    xr_vector<LPCSTR>			_tmp;
-    u32 i						= 0;
-    for(; i<5; ++i)
-    {
-        bool bBreakLoop = false;
-        switch (i)
-        {
-        case 3:		//"renderer_r2.5"
-            if (ps_ver_major < 3)
-                bBreakLoop = true;
-            break;
-        case 4:		//"renderer_r_dx10"
-            bBreakLoop = true;
-            break;
-        default:	;
-        }
-
-        if (bBreakLoop) break;
-
-        _tmp.push_back				(NULL);
-        LPCSTR val					= NULL;
-        switch (i)
-        {
-            case 0: val ="renderer_r1";			break;
-            case 1: val ="renderer_r2a";		break;
-            case 2: val ="renderer_r2";			break;
-            case 3: val ="renderer_r2.5";		break;
-            case 4: val ="renderer_r_dx10";		break; //  -)
-        }
-        _tmp.back()					= xr_strdup(val);
-    }
-    u32 _cnt								= _tmp.size()+1;
-    vid_quality_token						= xr_alloc<xr_token>(_cnt);
-
-    vid_quality_token[_cnt-1].id			= -1;
-    vid_quality_token[_cnt-1].name			= NULL;
-
-#ifdef DEBUG
-    Msg("Available render modes[%d]:",_tmp.size());
-#endif // DEBUG
-    for(u32 i=0; i<_tmp.size();++i)
-    {
-        vid_quality_token[i].id				= i;
-        vid_quality_token[i].name			= _tmp[i];
-#ifdef DEBUG
-        Msg							("[%s]",_tmp[i]);
-#endif // DEBUG
-    }
-}
-*/
 void free_vid_mode_list()
 {
     for( int i=0; vid_mode_token[i].name; i++ )

@@ -198,6 +198,8 @@ PROTECT_API void CRenderDevice::Create()
         true
     );
 
+	//UpdateWindowPropStyle(GetCurrentWindowPropStyle());
+
     string_path fname;
     FS.update_path(fname, "$game_data$", "shaders.xr");
 

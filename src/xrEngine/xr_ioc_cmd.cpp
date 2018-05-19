@@ -15,6 +15,33 @@
 
 #include "xr_object.h"
 
+u32 ps_vid_windowtype = 1;
+xr_token vid_windowtype_token[] =
+{
+	{ "windowed", 1 },
+	{ "windowed_borderless", 2 },
+	{ "fullscreen", 3 },
+	{ "fullscreen_borderless", 4 },
+	{ NULL, NULL },
+};
+
+
+ENGINE_API int			ps_always_active = 0;
+class CCC_VidWindowType : public CCC_Token
+{
+
+public:
+	CCC_VidWindowType(LPCSTR N, u32* V, xr_token* T) : CCC_Token(N, V, T) {}
+
+	virtual void Execute(LPCSTR args) override
+	{
+		CCC_Token::Execute(args);
+
+		u32 rawNewWindowType = *value;
+		Device.UpdateWindowPropStyle((WindowPropStyle)rawNewWindowType);
+	}
+};
+
 xr_token* vid_quality_token = NULL;
 
 xr_token vid_bpp_token[] =
@@ -484,65 +511,14 @@ public:
     virtual void Execute(LPCSTR args)
     {
         CCC_Float::Execute(args);
-        //Device.Gamma.Gamma (ps_gamma);
         Device.m_pRender->setGamma(ps_gamma);
-        //Device.Gamma.Brightness (ps_brightness);
         Device.m_pRender->setBrightness(ps_brightness);
-        //Device.Gamma.Contrast (ps_contrast);
         Device.m_pRender->setContrast(ps_contrast);
-        //Device.Gamma.Update ();
         Device.m_pRender->updateGamma();
     }
 };
 
-//-----------------------------------------------------------------------
-/*
-#ifdef DEBUG
-extern INT g_bDR_LM_UsePointsBBox;
-extern INT g_bDR_LM_4Steps;
-extern INT g_iDR_LM_Step;
-extern Fvector g_DR_LM_Min, g_DR_LM_Max;
 
-class CCC_DR_ClearPoint : public IConsole_Command
-{
-public:
-CCC_DR_ClearPoint(LPCSTR N) : IConsole_Command(N) { bEmptyArgsHandled = TRUE; };
-virtual void Execute(LPCSTR args) {
-g_DR_LM_Min.x = 1000000.0f;
-g_DR_LM_Min.z = 1000000.0f;
-
-g_DR_LM_Max.x = -1000000.0f;
-g_DR_LM_Max.z = -1000000.0f;
-
-Msg("Local BBox (%f, %f) - (%f, %f)", g_DR_LM_Min.x, g_DR_LM_Min.z, g_DR_LM_Max.x, g_DR_LM_Max.z);
-}
-};
-
-class CCC_DR_TakePoint : public IConsole_Command
-{
-public:
-CCC_DR_TakePoint(LPCSTR N) : IConsole_Command(N) { bEmptyArgsHandled = TRUE; };
-virtual void Execute(LPCSTR args) {
-Fvector CamPos = Device.vCameraPosition;
-
-if (g_DR_LM_Min.x > CamPos.x) g_DR_LM_Min.x = CamPos.x;
-if (g_DR_LM_Min.z > CamPos.z) g_DR_LM_Min.z = CamPos.z;
-
-if (g_DR_LM_Max.x < CamPos.x) g_DR_LM_Max.x = CamPos.x;
-if (g_DR_LM_Max.z < CamPos.z) g_DR_LM_Max.z = CamPos.z;
-
-Msg("Local BBox (%f, %f) - (%f, %f)", g_DR_LM_Min.x, g_DR_LM_Min.z, g_DR_LM_Max.x, g_DR_LM_Max.z);
-}
-};
-
-class CCC_DR_UsePoints : public CCC_Integer
-{
-public:
-CCC_DR_UsePoints(LPCSTR N, int* V, int _min=0, int _max=999) : CCC_Integer(N, V, _min, _max) {};
-virtual void Save (IWriter *F) {};
-};
-#endif
-*/
 
 ENGINE_API BOOL r2_sun_static = TRUE;
 ENGINE_API BOOL r2_advanced_pp = FALSE; // advanced post process and effects
@@ -785,6 +761,7 @@ void CCC_Register()
 
     // General video control
     CMD1(CCC_VidMode, "vid_mode");
+	CMD3(CCC_VidWindowType, "vid_windowtype", &ps_vid_windowtype, vid_windowtype_token);
 
 #ifdef DEBUG
     CMD3(CCC_Token, "vid_bpp", &psCurrentBPP, vid_bpp_token);
@@ -792,6 +769,7 @@ void CCC_Register()
 
     CMD1(CCC_VID_Reset, "vid_restart");
 
+	CMD4(CCC_Integer, "always_active", &ps_always_active, 0, 1);
     // Sound
     CMD2(CCC_Float, "snd_volume_eff", &psSoundVEffects);
     CMD2(CCC_Float, "snd_volume_music", &psSoundVMusic);

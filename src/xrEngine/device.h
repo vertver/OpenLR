@@ -27,6 +27,17 @@
 # include "../Include/editor/interfaces.hpp"
 #endif // #ifdef INGAME_EDITOR
 
+extern u32 ps_vid_windowtype;
+
+enum WindowPropStyle
+{
+	WPS_Windowed = 1,
+	WPS_WindowedBorderless = 2,
+	WPS_Fullscreen = 3,
+	WPS_FullscreenBorderless = 4
+};
+
+
 class engine_impl;
 
 #pragma pack(push,4)
@@ -248,6 +259,7 @@ public:
     void ConnectToRender();
     void Create(void);
     void Run(void);
+	void UpdateWindowPropStyle(WindowPropStyle PropStyle);
     void Destroy(void);
     void Reset(bool precache = true);
 
@@ -266,6 +278,8 @@ public:
         VERIFY(Timer.time_factor() == TimerGlobal.time_factor());
         return (Timer.time_factor());
     }
+
+	WindowPropStyle GetCurrentWindowPropStyle() const { return (WindowPropStyle)ps_vid_windowtype; };
 
     // Multi-threading
     xrCriticalSection mt_csEnter;
